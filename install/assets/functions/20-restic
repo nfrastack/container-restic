@@ -418,7 +418,7 @@ create_schedulers() {
 
             cp -R /assets/restic/template-restic-backup /etc/services.available/restic-backup"${instance}"
             sed -i "s|{{BACKUP_NUMBER}}|${instance}|g" /etc/services.available/restic-backup"${instance}"/run
-            cat <<EOF >> /usr/bin/backup"${instance}"-now
+            cat <<EOF > /usr/bin/backup"${instance}"-now
 #!/bin/bash
 source /assets/functions/00-container
 PROCESS_NAME=backup${instance}

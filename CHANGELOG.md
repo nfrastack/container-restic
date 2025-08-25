@@ -1,3 +1,9 @@
+## 1.2.33 2025-08-25 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Fix for 1.2.32
+
+
 ## 1.2.32 2025-08-20 <dave at tiredofit dot ca>
 
    ### Changed
