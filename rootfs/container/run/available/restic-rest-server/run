@@ -27,7 +27,7 @@ liftoff
 
 case "${SERVER_MODE,,}" in
     rclone )
-    print_start "Starting RClone REST repository server ${R_CLONE_VERSION} at ${SERVER_REPOSITORY_PATH}"
+    print_start "Starting RClone REST repository server $(/usr/sbin/rclone version | head -n1 | awk '{print $2}') at ${SERVER_REPOSITORY_PATH}"
     exec /usr/sbin/rclone \
                                     serve restic \
                                     --config "${SERVER_RCLONE_CONFIG_PATH}"/"${SERVER_RCLONE_CONFIG_FILE}" \
@@ -39,7 +39,7 @@ case "${SERVER_MODE,,}" in
                                     --stats-one-line
     ;;
     restic )
-        print_start "Starting Restic REST server ${RESTIC_REST_SERVER_VERSION} at ${SERVER_REPOSITORY_PATH}"
+        print_start "Starting Restic REST server $(/usr/sbin/rest-server -v | head -n1 | awk '{print $4}') at ${SERVER_REPOSITORY_PATH}"
         exec /usr/sbin/rest-server \
                                             --listen "${SERVER_LISTEN_IP}":"${SERVER_LISTEN_PORT}" \
                                             --path "${SERVER_REPOSITORY_PATH}" ${rest_server_args} ${SERVER_ARGS} \

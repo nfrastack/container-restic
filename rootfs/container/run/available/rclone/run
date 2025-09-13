@@ -14,6 +14,6 @@ transform_var file \
                     RCLONE_ARGS
 liftoff
 
-print_start "Starting Rclone ${R_CLONE_VERSION}"
+print_start "Starting Rclone $(/usr/sbin/rclone version | head -n1 | awk '{print $2}')"
 exec /usr/sbin/rclone \
                         ${RCLONE_ARGS}
