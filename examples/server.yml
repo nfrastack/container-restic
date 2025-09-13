@@ -1,6 +1,6 @@
 services:
   restic-server-app:
-    image: tiredofit/restic
+    image: docker.io/nfrastack/restic
     container_name: restic-server-app
     labels:
       - traefik.enable=true
@@ -18,8 +18,6 @@ services:
         - /dev/fuse:/dev/fuse:rwm
     environment:
       - TIMEZONE=America/Vancouver
-      - CONTAINER_NAME=restic-server-app
-
       - MODE=SERVER,CHECK,CLEANUP,PRUNE
 
       - SKIP_INIT=TRUE
