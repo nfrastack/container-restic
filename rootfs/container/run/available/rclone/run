@@ -1,0 +1,19 @@
+#!/command/with-contenv bash
+# SPDX-FileCopyrightText: © 2025 Nfrastack <code@nfrastack.com>
+#
+# SPDX-License-Identifier: MIT
+
+source /container/base/functions/container/init
+SERVICE_NAME="rclone"
+prepare_service 20-restic
+
+check_container_initialized
+check_service_initialized init
+
+transform_var file \
+                    RCLONE_ARGS
+liftoff
+
+print_start "Starting Rclone $(/usr/local/bin/rclone version | head -n1 | awk '{print $2}')"
+exec /usr/local/bin/rclone \
+                        ${RCLONE_ARGS}

@@ -13,7 +13,7 @@
                 "uuid": "81c9fb80d9a646ab8b3968db8f7a5394",
                 "template": "Restic",
                 "name": "Restic",
-                "description": "Restic Monitoring Template for version >0.15.1\n\nThis template is meant for use specifically with https://github.com/tiredofit/docker-restic\nversion 1.0.0 and higher.\n\nSteps for usage:\n- Create Hosts and add appropriate templates\n- Setup Image and ensure Zabbix configuration correct\n- Set MODE to BACKUP, CHECK, CLEANUP, INVENTORY\n- After execution of one of the above jobs, statistics will appear",
+                "description": "Restic Monitoring Template for version >0.15.1\n\nThis template is meant for use specifically with https://github.com/nfrastack/container-restic\nversion 1.0.0 and higher.\n\nSteps for usage:\n- Create Hosts and add appropriate templates\n- Setup Image and ensure Zabbix configuration correct\n- Set MODE to BACKUP, CHECK, CLEANUP, INVENTORY\n- After execution of one of the above jobs, statistics will appear",
                 "groups": [
                     {
                         "name": "Backup"

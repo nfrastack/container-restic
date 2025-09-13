@@ -1,6 +1,6 @@
 services:
   restic-app:
-    image: tiredofit/restic
+    image: docker.io/nfrastack/restic
     container_name: restic-app
     volumes:
       - ./cache:/cache
@@ -10,8 +10,6 @@ services:
       - /:/rootfs:ro
     environment:
       - TIMEZONE=America/Vancouver
-      - CONTAINER_NAME=restic-app
-
       - MODE=BACKUP
 
       #- DEFAULT_REPOSITORY_PASS=password
