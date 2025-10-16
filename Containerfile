@@ -2,11 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
-ARG BASE_IMAGE
-ARG DISTRO
-ARG DISTRO_VARIANT
+ARG \
+    BASE_IMAGE
 
-FROM ${BASE_IMAGE}:${DISTRO}_${DISTRO_VARIANT}
+FROM ${BASE_IMAGE}
 
 LABEL \
         org.opencontainers.image.title="Restic" \
@@ -41,7 +40,6 @@ ENV \
     RUN echo "" && \
     RESTIC_BUILD_DEPS_ALPINE=" \
                                     binutils \
-                                    go \
                                     git \
                                 " \
                                 && \
@@ -63,6 +61,7 @@ ENV \
                         RESTIC_BUILD_DEPS \
                         RESTIC_RUN_DEPS \
                     && \
+    package build go && \
     \
     ln -s /usr/bin/fusermount3 /usr/sbin/fusermount && \
     \
