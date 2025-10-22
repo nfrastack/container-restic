@@ -1192,11 +1192,13 @@ EOF
             backup_job_backup_summary_error_count="0"
         fi
 
-        if var_true "${CONTAINER_ENABLE_MONITORING}" && [ "${CONTAINER_MONITORING_BACKEND,,}" = "zabbix" ]; then
+        if var_true "${CONTAINER_ENABLE_MONITORING}" ; then
             source /container/base/defaults/*-monitoring
-            print_notice "Sending Backup Statistics to Zabbix"
-            silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -k restic.backup -o '[{"{#NAME}":"'${backup_job_log_suffix}'"}]'
-            cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+            case "${CONTAINER_MONITORING_BACKEND,,}" in
+                "zabbix" )
+                    print_notice "Sending Backup Statistics to Zabbix"
+                    silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -k restic.backup -o '[{"{#NAME}":"'${backup_job_log_suffix}'"}]'
+                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.backup.start_date.[${backup_job_log_suffix}] "${backup_routines_start_time}"
 - restic.backup.status.[${backup_job_log_suffix}] "${exitcode_backup}"
 - restic.backup.backup.duration.[${backup_job_log_suffix}] "${backup_process_total_time}"
@@ -1211,6 +1213,8 @@ EOF
 - restic.backup.size.bytes.processed.[${backup_job_log_suffix}] "${backup_job_backup_summary_processed_size_bytes}"
 - restic.backup.error.count.[${backup_job_log_suffix}] "${backup_job_backup_summary_error_count}"
 EOF
+                ;;
+            esac
         fi
 
         if [ -n "${backup_job_hook_post}" ]; then
@@ -1426,17 +1430,21 @@ EOF
             print_debug "[check] Processed ${check_job_snapshots_processed}"
         fi
 
-        if var_true "${CONTAINER_ENABLE_MONITORING}" && [ "${CONTAINER_MONITORING_BACKEND,,}" = "zabbix" ]; then
+        if var_true "${CONTAINER_ENABLE_MONITORING}" ; then
             source /container/base/defaults/*-monitoring
-            print_notice "Sending Check Statistics to Zabbix"
-            silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.check -o '[{"{#NAME}":"'${check_job_log_suffix}'"}]'
-            cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+            case "${CONTAINER_MONITORING_BACKEND,,}" in
+                "zabbix" )
+                    print_notice "Sending Check Statistics to Zabbix"
+                    silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.check -o '[{"{#NAME}":"'${check_job_log_suffix}'"}]'
+                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.check.start_date.[${check_job_log_suffix}] "${check_routines_start_time}"
 - restic.check.status.[${check_job_log_suffix}] "${exitcode_check}"
 - restic.check.duration.[${check_job_log_suffix}] "${check_process_total_time}"
 - restic.check.packs_unreferenced.[${check_job_log_suffix}] "${check_job_pack_unreferenced_count}"
 - restic.check.snapshots.processed.[${check_job_log_suffix}] "${check_job_snapshots_processed}"
 EOF
+                ;;
+            esac
         fi
 
         if [ -n "${check_job_hook_post}" ]; then
@@ -1783,19 +1791,21 @@ EOF
         cd "${LOG_PATH}"/"$(date +'%Y%m%d')"
         ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${cleanup_process_start_time}" +'%Y%m%d_%H%M%S')"-cleanup-"${cleanup_job_log_suffix}".log ../latest-cleanup-"${cleanup_job_log_suffix}".log
 
-        if var_true "${CONTAINER_ENABLE_MONITORING}" && [ "${CONTAINER_MONITORING_BACKEND,,}" = "zabbix" ]; then
+        if var_true "${CONTAINER_ENABLE_MONITORING}" ; then
             source /container/base/defaults/*-monitoring
-            print_notice "Sending Cleanup Statistics to Zabbix"
-            silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.cleanup -o '[{"{#NAME}":"'${cleanup_job_log_suffix}'"}]'
-            cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+            case "${CONTAINER_MONITORING_BACKEND,,}" in
+                "zabbix" )
+                    print_notice "Sending Cleanup Statistics to Zabbix"
+                    silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.cleanup -o '[{"{#NAME}":"'${cleanup_job_log_suffix}'"}]'
+                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.cleanup.start_date.[${cleanup_job_log_suffix}] "${cleanup_routines_start_time}"
 - restic.cleanup.status.[${cleanup_job_log_suffix}] "${exitcode_cleanup}"
 - restic.cleanup.duration.[${cleanup_job_log_suffix}] "${cleanup_process_total_time}"
 - restic.cleanup.target.[${cleanup_job_log_suffix}] "${cleanup_job_desc_hook_host}"
 - restic.cleanup.snapshots.removed.[${cleanup_job_log_suffix}] "${cleanup_job_stats_snapshots_removed}"
 EOF
-            if var_true "${cleanup_job_auto_prune}" ; then
-                cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+                    if var_true "${cleanup_job_auto_prune}" ; then
+                        cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.cleanup.prune.packs.processed.[${cleanup_job_log_suffix}] "${cleanup_job_stats_prune_packs_processed}"
 - restic.cleanup.prune.packs.keep.[${cleanup_job_log_suffix}] "${cleanup_job_stats_prune_packs_keep}"
 - restic.cleanup.prune.packs.repack.[${cleanup_job_log_suffix}] "${cleanup_job_stats_prune_packs_repack}"
@@ -1803,7 +1813,9 @@ EOF
 - restic.cleanup.prune.packs.delete.unreferenced.[${cleanup_job_log_suffix}] "${cleanup_job_stats_prune_packs_delete_unreferenced}"
 - restic.cleanup.prune.packs.delete.old.[${cleanup_job_log_suffix}] "${cleanup_job_stats_prune_packs_delete_old}"
 EOF
-            fi
+                    fi
+                ;;
+            esac
         fi
 
         if [ -n "${cleanup_job_hook_post}" ]; then
@@ -2099,17 +2111,22 @@ EOF
         fi
 
         inventory_job_snapshots_total=$(cat /tmp/"${inventory_instance_number}"-inventory-"${inventory_routines_start_time}".log  | grep -E "[0-9]. snapshots$" | awk '{print $1}')
-        if var_true "${CONTAINER_ENABLE_MONITORING}" && [ "${CONTAINER_MONITORING_BACKEND,,}" = "zabbix" ]; then
+        if var_true "${CONTAINER_ENABLE_MONITORING}" ; then
             source /container/base/defaults/*-monitoring
-            print_notice "Sending Inventory Statistics to Zabbix"
-            silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.inventory -o '[{"{#NAME}":"'${inventory_job_log_suffix}'"}]'
-            cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+            case "${CONTAINER_MONITORING_BACKEND,,}" in
+                "zabbix" )
+                    print_notice "Sending Inventory Statistics to Zabbix"
+                    silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.inventory -o '[{"{#NAME}":"'${inventory_job_log_suffix}'"}]'
+                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.inventory.start_date.[${inventory_job_log_suffix}] "${inventory_routines_start_time}"
 - restic.inventory.status.[${inventory_job_log_suffix}] "${exitcode_inventory}"
 - restic.inventory.duration.[${inventory_job_log_suffix}] "${inventory_process_total_time}"
 - restic.inventory.snapshots.total.[${inventory_job_log_suffix}] "${inventory_job_snapshots_total}"
 EOF
+                ;;
+            esac
         fi
+
 
         if [ -n "${inventory_job_hook_pre}" ]; then
             restic_hook post inventory
@@ -2330,11 +2347,13 @@ EOF
         prune_job_index_deleted_obsolete=$(awk '/deleting obsolete index files/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $9}')
         prune_job_packs_deleted_old=$(awk '/removing .* old packs/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $9}')
 
-        if var_true "${CONTAINER_ENABLE_MONITORING}" && [ "${CONTAINER_MONITORING_BACKEND,,}" = "zabbix" ]; then
+        if var_true "${CONTAINER_ENABLE_MONITORING}" ; then
             source /container/base/defaults/*-monitoring
-            print_notice "Sending Prune Statistics to Zabbix"
-            silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.prune -o '[{"{#NAME}":"'${prune_job_log_suffix}'"}]'
-            cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+            case "${CONTAINER_MONITORING_BACKEND,,}" in
+                "zabbix" )
+                    print_notice "Sending Prune Statistics to Zabbix"
+                    silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.prune -o '[{"{#NAME}":"'${prune_job_log_suffix}'"}]'
+                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.prune.start_date.[${prune_job_log_suffix}] "${prune_routines_start_time}"
 - restic.prune.status.[${prune_job_log_suffix}] "${exitcode_prune}"
 - restic.prune.duration.[${prune_job_log_suffix}] "${prune_process_total_time}"
@@ -2345,6 +2364,8 @@ EOF
 - restic.prune.index.delete.obsolete.[${prune_job_log_suffix}] "${prune_job_index_deleted_obsolete}"
 - restic.prune.packs.deleted.old.[${prune_job_log_suffix}] "${prune_job_packs_deleted_old}"
 EOF
+                ;;
+            esac
         fi
 
         if [ -n "${prune_job_hook_post}" ]; then
