@@ -1435,7 +1435,7 @@ EOF
             case "${CONTAINER_MONITORING_BACKEND,,}" in
                 "zabbix" )
                     print_notice "Sending Check Statistics to Zabbix"
-                    silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.check -o '[{"{#NAME}":"'${check_job_log_suffix}'"}]'
+                    silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -k restic.check -o '[{"{#NAME}":"'${check_job_log_suffix}'"}]'
                     cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.check.start_date.[${check_job_log_suffix}] "${check_routines_start_time}"
 - restic.check.status.[${check_job_log_suffix}] "${exitcode_check}"
@@ -1796,7 +1796,7 @@ EOF
             case "${CONTAINER_MONITORING_BACKEND,,}" in
                 "zabbix" )
                     print_notice "Sending Cleanup Statistics to Zabbix"
-                    silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.cleanup -o '[{"{#NAME}":"'${cleanup_job_log_suffix}'"}]'
+                    silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -k restic.cleanup -o '[{"{#NAME}":"'${cleanup_job_log_suffix}'"}]'
                     cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.cleanup.start_date.[${cleanup_job_log_suffix}] "${cleanup_routines_start_time}"
 - restic.cleanup.status.[${cleanup_job_log_suffix}] "${exitcode_cleanup}"
@@ -2116,7 +2116,7 @@ EOF
             case "${CONTAINER_MONITORING_BACKEND,,}" in
                 "zabbix" )
                     print_notice "Sending Inventory Statistics to Zabbix"
-                    silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.inventory -o '[{"{#NAME}":"'${inventory_job_log_suffix}'"}]'
+                    silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -k restic.inventory -o '[{"{#NAME}":"'${inventory_job_log_suffix}'"}]'
                     cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.inventory.start_date.[${inventory_job_log_suffix}] "${inventory_routines_start_time}"
 - restic.inventory.status.[${inventory_job_log_suffix}] "${exitcode_inventory}"
@@ -2352,7 +2352,7 @@ EOF
             case "${CONTAINER_MONITORING_BACKEND,,}" in
                 "zabbix" )
                     print_notice "Sending Prune Statistics to Zabbix"
-                    silent zabbix_sender -c /etc/zabbix/zabbix_agentd.conf -k restic.prune -o '[{"{#NAME}":"'${prune_job_log_suffix}'"}]'
+                    silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -k restic.prune -o '[{"{#NAME}":"'${prune_job_log_suffix}'"}]'
                     cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.prune.start_date.[${prune_job_log_suffix}] "${prune_routines_start_time}"
 - restic.prune.status.[${prune_job_log_suffix}] "${exitcode_prune}"
