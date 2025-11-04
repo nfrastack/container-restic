@@ -80,9 +80,9 @@ restic_bootstrap_variables() {
 
         transform_backup_instance_variable() {
             if grep -q "^BACKUP${1}_${2}=" "${backup_instance_vars}" && [ "$(grep "^BACKUP${1}_${2}=" "${backup_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^BACKUP${1}_${2}=" "${backup_instance_vars}" | cut -d = -f2)"
+                export "$3"="$(grep "^BACKUP${1}_${2}=" "${backup_instance_vars}" | cut -d = -f2-)"
             elif grep -q "^DEFAULT_BACKUP_${2}=" "${backup_instance_vars}" && [ "$(grep "^DEFAULT_BACKUP_${2}=" "${backup_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^DEFAULT_BACKUP_${2}=" "${backup_instance_vars}" | cut -d = -f2)"
+                export "$3"="$(grep "^DEFAULT_BACKUP_${2}=" "${backup_instance_vars}" | cut -d = -f2-)"
             fi
         }
 
@@ -140,9 +140,9 @@ restic_bootstrap_variables() {
 
         transform_check_instance_variable() {
             if grep -q "^CHECK${1}_${2}=" "${check_instance_vars}" && [ "$(grep "^CHECK${1}_${2}=" "${check_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^CHECK${1}_${2}=" "${check_instance_vars}" | cut -d = -f2)"
+                export "$3"="$(grep "^CHECK${1}_${2}=" "${check_instance_vars}" | cut -d = -f2-)"
             elif grep -q "^DEFAULT_CHECK_${2}=" "${check_instance_vars}" && [ "$(grep "^DEFAULT_CHECK_${2}=" "${check_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^DEFAULT_CHECK_${2}=" "${check_instance_vars}" | cut -d = -f2)"
+                export "$3"="$(grep "^DEFAULT_CHECK_${2}=" "${check_instance_vars}" | cut -d = -f2-)"
             fi
         }
 
@@ -198,9 +198,9 @@ restic_bootstrap_variables() {
 
         transform_cleanup_instance_variable() {
             if grep -q "^CLEANUP${1}_${2}=" "${cleanup_instance_vars}" && [ "$(grep "^CLEANUP${1}_${2}=" "${cleanup_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^CLEANUP${1}_${2}=" "${cleanup_instance_vars}" | cut -d = -f2)"
+                export "$3"="$(grep "^CLEANUP${1}_${2}=" "${cleanup_instance_vars}" | cut -d = -f2-)"
             elif grep -q "^DEFAULT_CLEANUP_${2}=" "${cleanup_instance_vars}" && [ "$(grep "^DEFAULT_CLEANUP_${2}=" "${cleanup_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^DEFAULT_CLEANUP_${2}=" "${cleanup_instance_vars}" | cut -d = -f2)"
+                export "$3"="$(grep "^DEFAULT_CLEANUP_${2}=" "${cleanup_instance_vars}" | cut -d = -f2-)"
             fi
         }
 
@@ -268,9 +268,9 @@ restic_bootstrap_variables() {
 
         transform_inventory_instance_variable() {
             if grep -q "^INVENTORY${1}_${2}=" "${inventory_instance_vars}" && [ "$(grep "^INVENTORY${1}_${2}=" "${inventory_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^INVENTORY${1}_${2}=" "${inventory_instance_vars}" | cut -d = -f2)"
+                export "$3"="$(grep "^INVENTORY${1}_${2}=" "${inventory_instance_vars}" | cut -d = -f2-)"
             elif grep -q "^DEFAULT_INVENTORY_${2}=" "${inventory_instance_vars}" && [ "$(grep "^DEFAULT_INVENTORY_${2}=" "${inventory_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^DEFAULT_INVENTORY_${2}=" "${inventory_instance_vars}" | cut -d = -f2)"
+                export "$3"="$(grep "^DEFAULT_INVENTORY_${2}=" "${inventory_instance_vars}" | cut -d = -f2-)"
             fi
         }
         transform_inventory_instance_variable "${inventory_instance_number}" NAME inventory_job_inventory_name
@@ -311,9 +311,9 @@ restic_bootstrap_variables() {
 
         transform_prune_instance_variable() {
             if grep -q "^PRUNE${1}_${2}=" "${prune_instance_vars}" && [ "$(grep "^PRUNE${1}_${2}=" "${prune_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^PRUNE${1}_${2}=" "${prune_instance_vars}" | cut -d = -f2)"
+                export "$3"="$(grep "^PRUNE${1}_${2}=" "${prune_instance_vars}" | cut -d = -f2-)"
             elif grep -q "^DEFAULT_PRUNE_${2}=" "${prune_instance_vars}" && [ "$(grep "^DEFAULT_PRUNE_${2}=" "${prune_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^DEFAULT_PRUNE_${2}=" "${prune_instance_vars}" | cut -d = -f2)"
+                export "$3"="$(grep "^DEFAULT_PRUNE_${2}=" "${prune_instance_vars}" | cut -d = -f2-)"
             fi
         }
 
@@ -363,9 +363,9 @@ restic_bootstrap_variables() {
 
         transform_unlock_variable() {
             if grep -q "^UNLOCK_${1}=" "${unlock_instance_vars}" && [ "$(grep "^UNLOCK_${1}=" "${unlock_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$2"="$(grep "^UNLOCK_${1}=" "${unlock_instance_vars}" | cut -d = -f2)"
+                export "$2"="$(grep "^UNLOCK_${1}=" "${unlock_instance_vars}" | cut -d = -f2-)"
             elif grep -q "^DEFAULT_UNLOCK_${1}=" "${unlock_instance_vars}" && [ "$(grep "^DEFAULT_UNLOCK_${1}=" "${unlock_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$2"="$(grep "^DEFAULT_UNLOCK_${1}=" "${unlock_instance_vars}" | cut -d = -f2)"
+                export "$2"="$(grep "^DEFAULT_UNLOCK_${1}=" "${unlock_instance_vars}" | cut -d = -f2-)"
             fi
         }
 
