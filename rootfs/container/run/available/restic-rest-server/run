@@ -30,10 +30,10 @@ case "${SERVER_MODE,,}" in
     print_start "Starting RClone REST repository server $(/usr/sbin/rclone version | head -n1 | awk '{print $2}') at ${SERVER_REPOSITORY_PATH}"
     exec /usr/sbin/rclone \
                                     serve restic \
-                                    --config "${SERVER_RCLONE_CONFIG_PATH}"/"${SERVER_RCLONE_CONFIG_FILE}" \
+                                    --config "${SERVER_RCLONE_CONFIG_PATH%/}"/"${SERVER_RCLONE_CONFIG_FILE}" \
                                     ${SERVER_REPOSITORY_PATH} \
                                     --addr "${SERVER_LISTEN_IP}":"${SERVER_LISTEN_PORT}" \
-                                    --log-file "${SERVER_LOG_PATH}"/"${SERVER_LOG_FILE}" \
+                                    --log-file "${SERVER_LOG_PATH%/}"/"${SERVER_LOG_FILE}" \
                                     --log-format date,time,microseconds \
                                     --log-level "${SERVER_LOG_LEVEL}" ${rclone_args} ${SERVER_ARGS} \
                                     --stats-one-line
@@ -44,7 +44,7 @@ case "${SERVER_MODE,,}" in
                                             --listen "${SERVER_LISTEN_IP}":"${SERVER_LISTEN_PORT}" \
                                             --path "${SERVER_REPOSITORY_PATH}" ${rest_server_args} ${SERVER_ARGS} \
                                                 \
-                                                | silent tee sudo -u restic tee -a "${SERVER_LOG_PATH}"/"${SERVER_LOG_FILE}"
+                                                | silent tee sudo -u restic tee -a "${SERVER_LOG_PATH%/}"/"${SERVER_LOG_FILE}"
 
     ;;
 esac

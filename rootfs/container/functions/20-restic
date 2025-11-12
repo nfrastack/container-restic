@@ -34,9 +34,9 @@ restic_bootstrap_filesystem() {
             echo "0 0 * * * /usr/sbin/logrotate_restic >/dev/null 2>&1" > /container/cron/restic_logrotate
 
             if var_true "${ENABLE_SERVER}" ; then
-                sudo -u restic touch "${SERVER_LOG_PATH}"/"${SERVER_LOG_FILE}"
-                chown restic:restic "${SERVER_LOG_PATH}"/"${SERVER_LOG_FILE}"
-                create_logrotate restic-rest-server "${SERVER_LOG_PATH}"/"${SERVER_LOG_FILE}" none restic restic
+                sudo -u restic touch "${SERVER_LOG_PATH%/}"/"${SERVER_LOG_FILE}"
+                chown restic:restic "${SERVER_LOG_PATH%/}"/"${SERVER_LOG_FILE}"
+                create_logrotate restic-rest-server "${SERVER_LOG_PATH%/}"/"${SERVER_LOG_FILE}" none restic restic
             fi
         ;;
     esac
@@ -636,7 +636,7 @@ restic_hook() {
                 if [ -x "${backup_job_hook_post}" ] ; then
                     print_notice "Executing post snapshot custom script : '${backup_job_hook_post}'"
                     ## script HOSTNAME _restic_hostname BACKUP INSTANCE_NUMBER[XX] BACKUP[XX]NAME BACKUP[XX]REPOSITORY_PATH ROUTINE_START_EPOCH PROCESS_START_EPOCH PROCESS_FINISH_EPOCH PROCESS_TOTAL_EPOCH EXITCODE LOGFILE FILES_NEW FILES_CHANGED FILES_UNMODIFIED DIRS_NEW DIRS_CHANGED DIRS_UNMODIFIED SIZE_BYTES_ADDED SIZE_BYTES_STORED SIZE_BYTES_PROCESSED ERROR_COUNT
-                    "${backup_job_hook_post}" "$(hostname)" "${_restic_hostname}" BACKUP "${backup_instance_number}" "${backup_job_log_suffix}" "${backup_job_repository_path}" "${backup_routines_start_time}" "${backup_process_start_time}" "${backup_process_finish_time}" "${backup_process_total_time}" "${exitcode_backup}" "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${backup_process_start_time}" +'%Y%m%d_%H%M%S')"-backup-"${backup_job_log_suffix}".log "${backup_job_backup_summary_files_new}" "${backup_job_backup_summary_files_changed}" "${backup_job_backup_summary_files_unmodified}" "${backup_job_backup_summary_directory_new}" "${backup_job_backup_summary_directory_changed}" "${backup_job_backup_summary_directory_unmodified}" "${backup_job_backup_summary_added_size_bytes}" "${backup_job_backup_summary_added_size_stored_bytes}" "${backup_job_backup_summary_processed_size_bytes}" "${backup_job_backup_summary_error_count}"
+                    "${backup_job_hook_post}" "$(hostname)" "${_restic_hostname}" BACKUP "${backup_instance_number}" "${backup_job_log_suffix}" "${backup_job_repository_path}" "${backup_routines_start_time}" "${backup_process_start_time}" "${backup_process_finish_time}" "${backup_process_total_time}" "${exitcode_backup}" "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${backup_process_start_time}" +'%Y%m%d_%H%M%S')"-backup-"${backup_job_log_suffix}".log "${backup_job_backup_summary_files_new}" "${backup_job_backup_summary_files_changed}" "${backup_job_backup_summary_files_unmodified}" "${backup_job_backup_summary_directory_new}" "${backup_job_backup_summary_directory_changed}" "${backup_job_backup_summary_directory_unmodified}" "${backup_job_backup_summary_added_size_bytes}" "${backup_job_backup_summary_added_size_stored_bytes}" "${backup_job_backup_summary_processed_size_bytes}" "${backup_job_backup_summary_error_count}"
                 else
                     print_error "Can't run post snapshot custom script: '${backup_job_hook_post}' as its filesystem bit is not executible!"
                 fi
@@ -645,7 +645,7 @@ restic_hook() {
                 if [ -x "${check_job_hook_post}" ] ; then
                     print_notice "Executing post check custom script : '${check_job_hook_post}'"
                     ## script HOSTNAME _restic_name TYPE INSTANCE_NUMBER NAME REPOSITORY_PATH ROUTINE_START_EPOCH PROCESS_START_EPOCH PROCESS_FINISH_EPOCH PROCESS_TOTAL_SECONDS EXITCODE LOGFILE PACKS_UNREFERENCED_COUNT SNAPSHOTS_PROCESSED
-                    "${check_job_hook_post}" "$(hostname)" "${_restic_hostname}" CHECK "${check_instance_number}" "${check_job_log_suffix}" "${check_job_repository_path}" "${check_routines_start_time}" "${check_process_start_time}" "${check_process_finish_time}" "${check_process_total_time}" "${exitcode_check}" "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log "${check_job_pack_unreferenced_count}" "${check_job_snapshots_processed}"
+                    "${check_job_hook_post}" "$(hostname)" "${_restic_hostname}" CHECK "${check_instance_number}" "${check_job_log_suffix}" "${check_job_repository_path}" "${check_routines_start_time}" "${check_process_start_time}" "${check_process_finish_time}" "${check_process_total_time}" "${exitcode_check}" "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log "${check_job_pack_unreferenced_count}" "${check_job_snapshots_processed}"
                 else
                     print_error "Can't run post check custom script: '${check_job_hook_post}' as its filesystem bit is not executible!"
                 fi
@@ -654,7 +654,7 @@ restic_hook() {
                 if [ -x "${cleanup_job_hook_post}" ] ; then
                     print_notice "Executing post cleanup custom script : '${cleanup_job_hook_post}'"
                     ## script HOSTNAME _restic_hostname TYPE INSTANCE_NUMBER NAME CLEANUP_HOST REPOSITORY_PATH ROUTINE_START_EPOCH PROCESS_START_EPOCH PROCESS_FINISH_EPOCH PROCESS_TOTAL_SECONDS EXITCODE LOGFILE SNAPSHOTS_REMOVED PRUNE_PACKS_PROCESSED PRUNE_PACKS_KEEP PRUNE_PACKS_REPACK PRUNE_PACKS_DELETE PRUNE_PACKS_DELETE_UNREFERENCED PRUNE_PACKS_DELETE_OLD
-                    "${cleanup_job_hook_post}" "$(hostname)" "${_restic_hostname}" CLEANUP "${cleanup_instance_number}" "${cleanup_job_desc_hook_host}" "${cleanup_job_log_suffix}" "${cleanup_job_repository_path}" "${cleanup_routines_start_time}" "${cleanup_process_start_time}" "${cleanup_process_finish_time}" "${cleanup_process_total_time}" "${exitcode_cleanup}" "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${cleanup_process_start_time}" +'%Y%m%d_%H%M%S')"-cleanup-"${cleanup_job_log_suffix}".log ${cleanup_job_stats_snapshots_removed} ${cleanup_job_stats_prune_packs_processed} ${cleanup_job_stats_prune_packs_keep} ${cleanup_job_stats_prune_packs_repack} ${cleanup_job_stats_prune_packs_delete} ${cleanup_job_stats_prune_packs_delete_unreferenced} ${cleanup_job_stats_prune_packs_delete_old}
+                    "${cleanup_job_hook_post}" "$(hostname)" "${_restic_hostname}" CLEANUP "${cleanup_instance_number}" "${cleanup_job_desc_hook_host}" "${cleanup_job_log_suffix}" "${cleanup_job_repository_path}" "${cleanup_routines_start_time}" "${cleanup_process_start_time}" "${cleanup_process_finish_time}" "${cleanup_process_total_time}" "${exitcode_cleanup}" "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${cleanup_process_start_time}" +'%Y%m%d_%H%M%S')"-cleanup-"${cleanup_job_log_suffix}".log ${cleanup_job_stats_snapshots_removed} ${cleanup_job_stats_prune_packs_processed} ${cleanup_job_stats_prune_packs_keep} ${cleanup_job_stats_prune_packs_repack} ${cleanup_job_stats_prune_packs_delete} ${cleanup_job_stats_prune_packs_delete_unreferenced} ${cleanup_job_stats_prune_packs_delete_old}
                 else
                     print_error "Can't run post cleanup custom script: '${cleanup_job_hook_post}' as its filesystem bit is not executible!"
                 fi
@@ -664,7 +664,7 @@ restic_hook() {
                 if [ -x "${inventory_job_hook_post}" ] ; then
                     print_notice "Executing post inventory custom script : '${inventory_job_hook_post}'"
                     ## script HOSTNAME _restic_hostname TYPE INSTANCE_NUMBER NAME REPOSITORY_PATH ROUTINE_START_EPOCH PROCESS_START_EPOCH PROCESS_FINISH_EPOCH PROCESS_TOTAL_SECONDS EXITCODE LOGFILE SNAPSHOTS_TOTAL
-                    "${inventory_job_hook_post}" "$(hostname)" "${_restic_hostname}" INVENTORY "${inventory_instance_number}" "${inventory_job_log_suffix}" "${inventory_job_repository_path}" "${inventory_routines_start_time}" "${inventory_process_start_time}" "${inventory_process_finish_time}" "${inventory_process_total_time}" "${exitcode_inventory}" "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${inventory_process_start_time}" +'%Y%m%d_%H%M%S')"-inventory-"${inventory_job_log_suffix}".log ${inventory_job_snapshots_total}
+                    "${inventory_job_hook_post}" "$(hostname)" "${_restic_hostname}" INVENTORY "${inventory_instance_number}" "${inventory_job_log_suffix}" "${inventory_job_repository_path}" "${inventory_routines_start_time}" "${inventory_process_start_time}" "${inventory_process_finish_time}" "${inventory_process_total_time}" "${exitcode_inventory}" "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${inventory_process_start_time}" +'%Y%m%d_%H%M%S')"-inventory-"${inventory_job_log_suffix}".log ${inventory_job_snapshots_total}
                 else
                     print_error "Can't run post inventory custom script: '${cleanup_job_hook_post}' as its filesystem bit is not executible!"
                 fi
@@ -673,7 +673,7 @@ restic_hook() {
                 if [ -x "${prune_job_hook_post}" ] ; then
                     print_notice "Executing post prune custom script : '${prune_job_hook_post}'"
                     ## script HOSTNAME _restic_hostname TYPE INSTANCE_NUMBER NAME REPOSITORY_PATH ROUTINE_START_EPOCH PROCESS_START_EPOCH PROCESS_FINISH_EPOCH PROCESS_TOTAL_SECONDS EXITCODE LOGFILE PACKS_REVIEWED PACKS_DELETED_UNREFERENCED PACKS_REPACKED PACKS_REINDEXED PACKS_DELETED_OLD PACKS_INDEX_DELETED_OBSOLETE
-                    "${prune_job_hook_post}" "$(hostname)" "${_restic_hostname}" PRUNE "${prune_instance_number}" "${prune_job_log_suffix}" "${prune_job_repository_path}" "${prune_routines_start_time}" "${prune_process_start_time}" "${prune_process_finish_time}" "${prune_process_total_time}" "${exitcode_prune}" "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${prune_process_start_time}" +'%Y%m%d_%H%M%S')"-prune-"${prune_job_log_suffix}".log "${prune_job_packs_reviewed}" "{prune_job_packs_deleted_unreferenced}" "{prune_job_packs_repacked}" "{prune_job_packs_reindexed}" "{prune_job_index_deleted_obsolete}" "{prune_job_packs_deleted_old}"
+                    "${prune_job_hook_post}" "$(hostname)" "${_restic_hostname}" PRUNE "${prune_instance_number}" "${prune_job_log_suffix}" "${prune_job_repository_path}" "${prune_routines_start_time}" "${prune_process_start_time}" "${prune_process_finish_time}" "${prune_process_total_time}" "${exitcode_prune}" "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${prune_process_start_time}" +'%Y%m%d_%H%M%S')"-prune-"${prune_job_log_suffix}".log "${prune_job_packs_reviewed}" "{prune_job_packs_deleted_unreferenced}" "{prune_job_packs_repacked}" "{prune_job_packs_reindexed}" "{prune_job_index_deleted_obsolete}" "{prune_job_packs_deleted_old}"
                 else
                     print_error "Can't run post prune custom script: '${prune_job_hook_post}' as its filesystem bit is not executible!"
                 fi
@@ -682,7 +682,7 @@ restic_hook() {
                 if [ -x "${unlock_job_hook_post}" ] ; then
                     print_notice "Executing post unlock custom script : '${unlock_job_hook_post}'"
                     ## script HOSTNAME _restic_hostname TYPE REPOSITORY_PATH ROUTINE_START_EPOCH PROCESS_START_EPOCH PROCESS_FINISH_EPOCH PROCESS_TOTAL_SECONDS EXITCODE LOGFILE
-                    "${unlock_job_hook_post}" "$(hostname)" "${_restic_hostname}" UNLOCK "${unlock_job_repository_path}" "${unlock_routines_start_time}" "${unlock_process_start_time}" "${unlock_process_finish_time}" "${unlock_process_total_time}" "${exitcode_unlock}" "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${unlock_process_start_time}" +'%Y%m%d_%H%M%S')"-unlock.log
+                    "${unlock_job_hook_post}" "$(hostname)" "${_restic_hostname}" UNLOCK "${unlock_job_repository_path}" "${unlock_routines_start_time}" "${unlock_process_start_time}" "${unlock_process_finish_time}" "${unlock_process_total_time}" "${exitcode_unlock}" "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${unlock_process_start_time}" +'%Y%m%d_%H%M%S')"-unlock.log
                 else
                     print_error "Can't run post unlock custom script: '${unlock_job_hook_post}' as its filesystem bit is not executible!"
                 fi
@@ -1148,13 +1148,13 @@ EOF
                             )
         fi
 
-        sudo -u restic mkdir -p "${LOG_PATH}"/"$(date +'%Y%m%d')"
-        cat << EOF | silent sudo -u restic tee "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${backup_process_start_time}" +'%Y%m%d_%H%M%S')"-backup-"${backup_job_log_suffix}".log
+        sudo -u restic mkdir -p "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
+        cat << EOF | silent sudo -u restic tee "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${backup_process_start_time}" +'%Y%m%d_%H%M%S')"-backup-"${backup_job_log_suffix}".log
 ${backup_job_file_log}
 
 EOF
 
-        cd "${LOG_PATH}"/"$(date +'%Y%m%d')"
+        cd "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
         ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${backup_process_start_time}" +'%Y%m%d_%H%M%S')"-backup-"${backup_job_log_suffix}".log ../latest-backup-"${backup_job_log_suffix}".log
 
         backup_job_backup_summary_files=$(grep "^Files:" /tmp/"${backup_instance_number}"-backup-"${backup_routines_start_time}".log | xargs | sed "s|Files:||g")
@@ -1197,8 +1197,8 @@ EOF
             case "${CONTAINER_MONITORING_BACKEND,,}" in
                 "zabbix" )
                     print_notice "Sending Backup Statistics to Zabbix"
-                    silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -k restic.backup -o '[{"{#NAME}":"'${backup_job_log_suffix}'"}]'
-                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+                    silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -k restic.backup -o '[{"{#NAME}":"'${backup_job_log_suffix}'"}]'
+                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.backup.start_date.[${backup_job_log_suffix}] "${backup_routines_start_time}"
 - restic.backup.status.[${backup_job_log_suffix}] "${exitcode_backup}"
 - restic.backup.backup.duration.[${backup_job_log_suffix}] "${backup_process_total_time}"
@@ -1355,7 +1355,7 @@ EOF
                 exitcode_check_description="FAIL"
                 restic_notify \
                         "$(date -d @"${check_routines_start_time}" +'%Y%m%d_%H%M%S')" \
-                        "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log \
+                        "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log \
                         "{exitcode_check}" \
                         "[FATAL] [${check_job_log_suffix}] Check failed completely" \
                         "Restic is failing to check the '${check_job_log_suffix}' job."
@@ -1365,7 +1365,7 @@ EOF
                 exitcode_check_description="ERROR"
                 restic_notify \
                         "$(date -d @"${check_routines_start_time}" +'%Y%m%d_%H%M%S')" \
-                        "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log \
+                        "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log \
                         "{exitcode_check}" \
                         "[WARN] [${check_job_log_suffix}] Check completed with errors" \
                         "Restic is failing to perform a full check of the '${check_job_log_suffix}' job."
@@ -1375,7 +1375,7 @@ EOF
                 exitcode_check_description="UNKNOWN"
                 restic_notify \
                         "$(date -d @"${check_routines_start_time}" +'%Y%m%d_%H%M%S')" \
-                        "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log \
+                        "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log \
                         "{exitcode_check}" \
                         "[WARN] [${check_job_log_suffix}] Check failed due to unknown errors" \
                         "Restic is throwing an unknown error code while trying to check the '${check_job_log_suffix}' job."
@@ -1411,13 +1411,13 @@ EOF
                             )
         fi
 
-        sudo -u restic mkdir -p "${LOG_PATH}"/"$(date +'%Y%m%d')"
-        cat << EOF | silent sudo -u restic tee "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log
+        sudo -u restic mkdir -p "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
+        cat << EOF | silent sudo -u restic tee "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log
 ${check_job_file_log}
 
 EOF
 
-        cd "${LOG_PATH}"/"$(date +'%Y%m%d')"
+        cd "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
         ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log ../latest-check-"${check_job_log_suffix}".log
 
         if grep -q "^pack .* not referenced in any index" /tmp/"${check_instance_number}"-check-"${check_routines_start_time}".log ; then
@@ -1436,7 +1436,7 @@ EOF
                 "zabbix" )
                     print_notice "Sending Check Statistics to Zabbix"
                     silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -k restic.check -o '[{"{#NAME}":"'${check_job_log_suffix}'"}]'
-                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.check.start_date.[${check_job_log_suffix}] "${check_routines_start_time}"
 - restic.check.status.[${check_job_log_suffix}] "${exitcode_check}"
 - restic.check.duration.[${check_job_log_suffix}] "${check_process_total_time}"
@@ -1783,12 +1783,12 @@ EOF
                             )
         fi
 
-        sudo -u restic mkdir -p "${LOG_PATH}"/"$(date +'%Y%m%d')"
-        cat << EOF | silent sudo -u restic tee -a "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${cleanup_process_start_time}" +'%Y%m%d_%H%M%S')"-cleanup-${cleanup_job_log_suffix}.log
+        sudo -u restic mkdir -p "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
+        cat << EOF | silent sudo -u restic tee -a "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${cleanup_process_start_time}" +'%Y%m%d_%H%M%S')"-cleanup-${cleanup_job_log_suffix}.log
 ${cleanup_job_file_log}
 EOF
 
-        cd "${LOG_PATH}"/"$(date +'%Y%m%d')"
+        cd "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
         ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${cleanup_process_start_time}" +'%Y%m%d_%H%M%S')"-cleanup-"${cleanup_job_log_suffix}".log ../latest-cleanup-"${cleanup_job_log_suffix}".log
 
         if var_true "${CONTAINER_ENABLE_MONITORING}" ; then
@@ -1797,7 +1797,7 @@ EOF
                 "zabbix" )
                     print_notice "Sending Cleanup Statistics to Zabbix"
                     silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -k restic.cleanup -o '[{"{#NAME}":"'${cleanup_job_log_suffix}'"}]'
-                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.cleanup.start_date.[${cleanup_job_log_suffix}] "${cleanup_routines_start_time}"
 - restic.cleanup.status.[${cleanup_job_log_suffix}] "${exitcode_cleanup}"
 - restic.cleanup.duration.[${cleanup_job_log_suffix}] "${cleanup_process_total_time}"
@@ -1805,7 +1805,7 @@ EOF
 - restic.cleanup.snapshots.removed.[${cleanup_job_log_suffix}] "${cleanup_job_stats_snapshots_removed}"
 EOF
                     if var_true "${cleanup_job_auto_prune}" ; then
-                        cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+                        cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.cleanup.prune.packs.processed.[${cleanup_job_log_suffix}] "${cleanup_job_stats_prune_packs_processed}"
 - restic.cleanup.prune.packs.keep.[${cleanup_job_log_suffix}] "${cleanup_job_stats_prune_packs_keep}"
 - restic.cleanup.prune.packs.repack.[${cleanup_job_log_suffix}] "${cleanup_job_stats_prune_packs_repack}"
@@ -2101,12 +2101,12 @@ EOF
 
 
         if [ -s /tmp/"${inventory_instance_number}"-inventory-"${inventory_routines_start_time}".log ] ; then
-            sudo -u restic mkdir -p "${LOG_PATH}"/"$(date +'%Y%m%d')"
-            cat << EOF | silent sudo -u restic tee "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${inventory_process_start_time}" +'%Y%m%d_%H%M%S')"-inventory-${inventory_job_log_suffix}.log
+            sudo -u restic mkdir -p "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
+            cat << EOF | silent sudo -u restic tee "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${inventory_process_start_time}" +'%Y%m%d_%H%M%S')"-inventory-${inventory_job_log_suffix}.log
 ${inventory_job_file_log}
 
 EOF
-            cd "${LOG_PATH}"/"$(date +'%Y%m%d')"
+            cd "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
             ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${inventory_process_start_time}" +'%Y%m%d_%H%M%S')"-inventory-${inventory_job_log_suffix}.log ../latest-inventory-${inventory_job_log_suffix}.log
         fi
 
@@ -2117,7 +2117,7 @@ EOF
                 "zabbix" )
                     print_notice "Sending Inventory Statistics to Zabbix"
                     silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -k restic.inventory -o '[{"{#NAME}":"'${inventory_job_log_suffix}'"}]'
-                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.inventory.start_date.[${inventory_job_log_suffix}] "${inventory_routines_start_time}"
 - restic.inventory.status.[${inventory_job_log_suffix}] "${exitcode_inventory}"
 - restic.inventory.duration.[${inventory_job_log_suffix}] "${inventory_process_total_time}"
@@ -2331,13 +2331,13 @@ $(cat /tmp/${prune_instance_number}-prune-${prune_routines_start_time}.error)
 EOF
                             )"
         fi
-        sudo -u restic mkdir -p "${LOG_PATH}"/"$(date +'%Y%m%d')"
-        cat << EOF | silent sudo -u restic tee "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${prune_process_start_time}" +'%Y%m%d_%H%M%S')"-prune-${prune_job_log_suffix}.log
+        sudo -u restic mkdir -p "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
+        cat << EOF | silent sudo -u restic tee "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${prune_process_start_time}" +'%Y%m%d_%H%M%S')"-prune-${prune_job_log_suffix}.log
 ${prune_job_file_log}
 
 EOF
 
-        cd "${LOG_PATH}"/"$(date +'%Y%m%d')"
+        cd "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
         ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${prune_process_start_time}" +'%Y%m%d_%H%M%S')"-prune-"${prune_job_log_suffix}".log ../latest-prune-"${prune_job_log_suffix}".log
 
         prune_job_packs_reviewed=$(awk '/collecting packs for deletion and repacking/,/packs processed/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $11}')
@@ -2353,7 +2353,7 @@ EOF
                 "zabbix" )
                     print_notice "Sending Prune Statistics to Zabbix"
                     silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -k restic.prune -o '[{"{#NAME}":"'${prune_job_log_suffix}'"}]'
-                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH}"/"${ZABBIX_CONFIG_FILE}" -i -
+                    cat <<EOF | silent zabbix_sender -c "${ZABBIX_CONFIG_PATH%/}"/"${ZABBIX_CONFIG_FILE}" -i -
 - restic.prune.start_date.[${prune_job_log_suffix}] "${prune_routines_start_time}"
 - restic.prune.status.[${prune_job_log_suffix}] "${exitcode_prune}"
 - restic.prune.duration.[${prune_job_log_suffix}] "${prune_process_total_time}"
@@ -2392,7 +2392,7 @@ EOF
             sudo -u restic touch "${SERVER_PASSWORD_FILE}"
         fi
 
-        if [ ! -s "${RCLONE_CONFIG_PATH}"/"${RCLONE_CONFIG_FILE}" ] ; then
+        if [ ! -s "${RCLONE_CONFIG_PATH%/}"/"${RCLONE_CONFIG_FILE}" ] ; then
             print_warn "[server] Detected missing Rclone configuration file '${RCLONE_CONFIG_PATH}/${RCLONE_CONFIG_FILE}'. Please configure it use the server!"
         fi
     }
@@ -2551,13 +2551,13 @@ EOF
         fi
 
         if [ -s /tmp/unlock-"${unlock_routines_start_time}".error ] || [ -s /tmp/unlock-"${unlock_routines_start_time}".log ] ; then
-            sudo -u restic mkdir -p "${LOG_PATH}"/"$(date +'%Y%m%d')"
-            cat << EOF | silent sudo -u restic tee "${LOG_PATH}"/"$(date +'%Y%m%d')"/"$(date -d @"${unlock_process_start_time}" +'%Y%m%d_%H%M%S')"-unlock.log
+            sudo -u restic mkdir -p "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
+            cat << EOF | silent sudo -u restic tee "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${unlock_process_start_time}" +'%Y%m%d_%H%M%S')"-unlock.log
 ${unlock_job_file_log}
 
 EOF
 
-            cd "${LOG_PATH}"/"$(date +'%Y%m%d')"
+            cd "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
             ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${unlock_process_start_time}" +'%Y%m%d_%H%M%S')"-unlock.log ../latest-unlock.log
         fi
 
