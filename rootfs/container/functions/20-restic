@@ -18,7 +18,7 @@ restic_bootstrap_filesystem() {
     if [[ "${REPOSITORY_PATH}" != *:* ]]; then
         create_folder \
                         "${REPOSITORY_PATH}" \
-                        restic:restic 755
+                        restic:restic 750
     fi
 
     create_folder \
@@ -765,8 +765,8 @@ restic_notify() {
 
     notification_email() {
         transform_var file \
-                                SMTP_HOST \
-                                SMTP_PORT
+                            SMTP_HOST \
+                            SMTP_PORT
         if [ -z "${MAIL_FROM}" ] ; then print_error "[notifications] No MAIL_FROM variable set - Skipping sending Email notifications" ; skip_mail=true ; fi
         if [ -z "${MAIL_TO}" ] ; then print_error "[notifications] No MAIL_TO variable set - Skipping sending Email notifications" ; skip_mail=true ; fi
         if [ -z "${SMTP_HOST}" ] ; then print_error "[notifications] No SMTP_HOST variable set - Skipping sending Email notifications" ; skip_mail=true ; fi
@@ -899,7 +899,7 @@ restic_repository() {
         backup_process_start_time=$(date +%s)
         backup_job_file_log=$(cat <<EOF
 # Job Started:                          $(date -d @"${backup_routines_start_time}" +'%Y-%m-%d %H:%M:%S') (${backup_routines_start_time})
-# Repository:                           $(echo "${backup_job_repository_path}" | sed "s|\(.*\):\(.*\):.*@\(.*\)|\1:\2:redacted@\3|g")
+# Repository:                           $(echo "${backup_job_repository_path}" | sed -E 's#(://[^:/]+:)[^@]+@#\1REDACTED@#g')
 # Container Hostname:                   $(hostname)
 # Restic Hostname:                      $(echo "${_restic_hostname}")
 
@@ -1224,7 +1224,7 @@ EOF
         if [ -z "${check_routines_start_time}" ] ; then check_routines_start_time=$(date +%s) ; fi
         check_job_file_log=$(cat <<EOF
 ## Job Started:                        $(date -d @${check_routines_start_time} +'%Y-%m-%d %H:%M:%S') (${check_routines_start_time})
-## Repository:                         $(echo ${check_job_repository_path} | sed "s|\(.*\):\(.*\):.*@\(.*\)|\1:\2:redacted@\3|g")
+## Repository:                         $(echo ${check_job_repository_path} | sed -E 's#(://[^:/]+:)[^@]+@#\1REDACTED@#g')
 ## Container Hostname:                 $(hostname)
 ## Restic Hostname:                    $(echo "${_restic_hostname}")
 
@@ -1454,7 +1454,7 @@ EOF
         if [ -z "${cleanup_routines_start_time}" ] ; then cleanup_routines_start_time=$(date +%s) ; fi
         cleanup_job_file_log=$(cat <<EOF
 ## Job Started:                        $(date -d @${cleanup_routines_start_time} +'%Y-%m-%d %H:%M:%S') (${cleanup_routines_start_time})
-## Repository:                         $(echo ${cleanup_job_repository_path} | sed "s|\(.*\):\(.*\):.*@\(.*\)|\1:\2:redacted@\3|g")
+## `Repository:                         $(echo ${cleanup_job_repository_path} | sed -E 's#(://[^:/]+:)[^@]+@#\1REDACTED@#g')`
 ## Container Hostname:                 $(hostname)
 ## Restic Hostname:                    $(echo "${_restic_hostname}")
 
@@ -1974,7 +1974,7 @@ EOF
         if [ -z "${inventory_routines_start_time}" ] ; then inventory_routines_start_time=$(date +%s) ; fi
         inventory_job_file_log=$(cat <<EOF
 ## Job Started:                        $(date -d @${inventory_routines_start_time} +'%Y-%m-%d %H:%M:%S') (${inventory_routines_start_time})
-## Repository:                         $(echo ${inventory_job_repository_path} | sed "s|\(.*\):\(.*\):.*@\(.*\)|\1:\2:redacted@\3|g")
+## Repository:                         $(echo ${inventory_job_repository_path} | sed -E 's#(://[^:/]+:)[^@]+@#\1REDACTED@#g')
 ## Container Hostname:                 $(hostname)
 ## Restic Hostname:                    $(echo "${_restic_hostname}")
 
@@ -2129,7 +2129,7 @@ EOF
         if [ -z "${prune_routines_start_time}" ] ; then prune_routines_start_time=$(date +%s) ; fi
         prune_job_file_log=$(cat <<EOF
 ## Job Started:                        $(date -d @${prune_routines_start_time} +'%Y-%m-%d %H:%M:%S') (${prune_routines_start_time})
-## Repository:                         $(echo ${prune_job_repository_path} | sed "s|\(.*\):\(.*\):.*@\(.*\)|\1:\2:redacted@\3|g")
+## Repository:                         $(echo ${prune_job_repository_path} | sed -E 's#(://[^:/]+:)[^@]+@#\1REDACTED@#g')
 ## Container Hostname:                 $(hostname)
 ## Restic Hostname:                    $(echo "${_restic_hostname}")
 
@@ -2393,7 +2393,7 @@ EOF
         if [ -z "${unlock_routines_start_time}" ] ; then unlock_routines_start_time=$(date +%s) ; fi
             unlock_job_file_log=$(cat <<EOF
 ## Job Started:                        $(date -d @${unlock_routines_start_time} +'%Y-%m-%d %H:%M:%S') (${unlock_routines_start_time})
-## Repository:                         $(echo ${unlock_job_repository_path} | sed "s|\(.*\):\(.*\):.*@\(.*\)|\1:\2:redacted@\3|g")
+## Repository:                         $(echo ${unlock_job_repository_path} | sed -E 's#(://[^:/]+:)[^@]+@#\1REDACTED@#g')
 ## Container Hostname:                 $(hostname)
 ## Restic Hostname:                    $(echo "${_restic_hostname}")
 
