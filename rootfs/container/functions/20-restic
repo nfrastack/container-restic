@@ -411,11 +411,11 @@ restic_create_schedulers() {
             local instance="${1}"
             instance=$(printf "%02d" ${instance})
             if [ -v BACKUP${instance}_REPOSITORY_PATH ] && [ "$(set -o posix; set | grep -E "^BACKUP${instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
-                echo "BACKUP${instance} $(grep -E "^BACKUP${instance}_REPOSITORY_PATH" | cut -d = -f 2)" >> /container/state/restic/INIT_REPOSITORIES
+                echo "BACKUP${instance} $(grep -E "^BACKUP${instance}_REPOSITORY_PATH" | cut -d = -f 2)" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${DEFAULT_BACKUP_REPOSITORY_PATH}" ] && [ "${DEFAULT_BACKUP_REPOSITORY_PATH}" != "unset" ]; then
-                echo "BACKUP${instance} ${DEFAULT_BACKUP_REPOSITORY_PATH}" >> /container/state/restic/INIT_REPOSITORIES
+                echo "BACKUP${instance} ${DEFAULT_BACKUP_REPOSITORY_PATH}" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${REPOSITORY_PATH}" ] && [ "${REPOSITORY_PATH}" != "unset" ]; then
-                echo "BACKUP${instance} ${REPOSITORY_PATH}" >> /container/state/restic/INIT_REPOSITORIES
+                echo "BACKUP${instance} ${REPOSITORY_PATH}" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             fi
             cp -R /container/data/restic/template-restic-backup /container/run/available/restic-backup"${instance}"
             sed -i "s|{{BACKUP_NUMBER}}|${instance}|g" /container/run/available/restic-backup"${instance}"/run
@@ -451,11 +451,11 @@ EOF
             local instance="${1}"
             instance=$(printf "%02d" $instance)
             if [ -v CHECK${instance}_REPOSITORY_PATH ] && [ "$(set -o posix; set | grep -E "^CHECK${instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
-                echo "CHECK${instance} $(set -o posix; set | grep -E "^CHECK${instance}_REPOSITORY_PATH" | cut -d = -f 2)" >> /container/state/restic/INIT_REPOSITORIES
+                echo "CHECK${instance} $(set -o posix; set | grep -E "^CHECK${instance}_REPOSITORY_PATH" | cut -d = -f 2)" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${DEFAULT_CHECK_REPOSITORY_PATH}" ] && [ "${DEFAULT_CHECK_REPOSITORY_PATH}" != "unset" ]; then
-                echo "CHECK${instance} ${DEFAULT_CHECK_REPOSITORY_PATH}" >> /container/state/restic/INIT_REPOSITORIES
+                echo "CHECK${instance} ${DEFAULT_CHECK_REPOSITORY_PATH}" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${REPOSITORY_PATH}" ] && [ "${REPOSITORY_PATH}" != "unset" ]; then
-                echo "CHECK${instance} ${REPOSITORY_PATH}" >> /container/state/restic/INIT_REPOSITORIES
+                echo "CHECK${instance} ${REPOSITORY_PATH}" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             fi
             cp -R /container/data/restic/template-restic-check /container/run/available/restic-check"${instance}"
             sed -i "s|{{CHECK_NUMBER}}|${instance}|g" /container/run/available/restic-check"${instance}"/run
@@ -491,11 +491,11 @@ EOF
             local instance="${1}"
             instance=$(printf "%02d" $instance)
             if [ -v CLEANUP${instance}_REPOSITORY_PATH ] && [ "$(set -o posix; set | grep -E "^CLEANUP${instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
-                echo "CLEANUP${instance} $(set -o posix; set | grep -E "^CLEANUP${instance}_REPOSITORY_PATH" | cut -d = -f 2)" >> /container/state/restic/INIT_REPOSITORIES
+                echo "CLEANUP${instance} $(set -o posix; set | grep -E "^CLEANUP${instance}_REPOSITORY_PATH" | cut -d = -f 2)" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${DEFAULT_CLEANUP_REPOSITORY_PATH}" ] && [ "${DEFAULT_CLEANUP_REPOSITORY_PATH}" != "unset" ]; then
-                echo "CLEANUP${instance} ${DEFAULT_CLEANUP_REPOSITORY_PATH}" >> /container/state/restic/INIT_REPOSITORIES
+                echo "CLEANUP${instance} ${DEFAULT_CLEANUP_REPOSITORY_PATH}" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${REPOSITORY_PATH}" ] && [ "${REPOSITORY_PATH}" != "unset" ]; then
-                echo "CLEANUP${instance} ${REPOSITORY_PATH}" >> /container/state/restic/INIT_REPOSITORIES
+                echo "CLEANUP${instance} ${REPOSITORY_PATH}" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             fi
             cp -R /container/data/restic/template-restic-cleanup /container/run/available/restic-cleanup"${instance}"
             sed -i "s|{{CLEANUP_NUMBER}}|${instance}|g" /container/run/available/restic-cleanup"${instance}"/run
@@ -540,11 +540,11 @@ EOF
             local instance="${1}"
             instance=$(printf "%02d" $instance)
             if [ -v INVENTORY${instance}_REPOSITORY_PATH ] && [ "$(set -o posix; set | grep -E "^INVENTORY${instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
-                echo "INVENTORY${instance} $(set -o posix; set | grep -E "^INVENTORY${instance}_REPOSITORY_PATH" | cut -d = -f 2)" >> /container/state/restic/INIT_REPOSITORIES
+                echo "INVENTORY${instance} $(set -o posix; set | grep -E "^INVENTORY${instance}_REPOSITORY_PATH" | cut -d = -f 2)" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${DEFAULT_INVENTORY_REPOSITORY_PATH}" ] && [ "${DEFAULT_INVENTORY_REPOSITORY_PATH}" != "unset" ]; then
-                echo "INVENTORY${instance} ${DEFAULT_INVENTORY_REPOSITORY_PATH}" >> /container/state/restic/INIT_REPOSITORIES
+                echo "INVENTORY${instance} ${DEFAULT_INVENTORY_REPOSITORY_PATH}" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${REPOSITORY_PATH}" ] && [ "${REPOSITORY_PATH}" != "unset" ]; then
-                echo "INVENTORY${instance} ${REPOSITORY_PATH}" >> /container/state/restic/INIT_REPOSITORIES
+                echo "INVENTORY${instance} ${REPOSITORY_PATH}" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             fi
             cp -R /container/data/restic/template-restic-inventory /container/run/available/restic-inventory"${instance}"
             sed -i "s|{{INVENTORY_NUMBER}}|${instance}|g" /container/run/available/restic-inventory"${instance}"/run
@@ -579,11 +579,11 @@ EOF
             local instance="${1}"
             instance=$(printf "%02d" $instance)
             if [ -v PRUNE${instance}_REPOSITORY_PATH ] && [ "$(set -o posix; set | grep -E "^PRUNE${instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
-                echo "PRUNE${instance} $(set -o posix; set | grep -E "^PRUNE${instance}_REPOSITORY_PATH" | cut -d = -f 2)" >> /container/state/restic/INIT_REPOSITORIES
+                echo "PRUNE${instance} $(set -o posix; set | grep -E "^PRUNE${instance}_REPOSITORY_PATH" | cut -d = -f 2)" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${DEFAULT_PRUNE_REPOSITORY_PATH}" ] && [ "${DEFAULT_PRUNE_REPOSITORY_PATH}" != "unset" ]; then
-                echo "PRUNE${instance} ${DEFAULT_PRUNE_REPOSITORY_PATH}" >> /container/state/restic/INIT_REPOSITORIES
+                echo "PRUNE${instance} ${DEFAULT_PRUNE_REPOSITORY_PATH}" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${REPOSITORY_PATH}" ] && [ "${REPOSITORY_PATH}" != "unset" ]; then
-                echo "PRUNE${instance} ${REPOSITORY_PATH}" >> /container/state/restic/INIT_REPOSITORIES
+                echo "PRUNE${instance} ${REPOSITORY_PATH}" | silent tee -a /container/state/restic/INIT_REPOSITORIES
             fi
             cp -R /container/data/restic/template-restic-prune /container/run/available/restic-prune"${instance}"
             sed -i "s|{{PRUNE_NUMBER}}|${instance}|g" /container/run/available/restic-prune"${instance}"/run
@@ -777,7 +777,7 @@ restic_notify() {
         if [ -z "${SMTP_PORT}" ] ; then print_error "[notifications] No SMTP_PORT variable set - Skipping sending Email notifications" ; skip_mail=true ; fi
         if var_nottrue "${skip_mail}" ; then
             if ! grep -q ^from /etc/msmptrc ; then
-                echo "from ${MAIL_FROM}" >> /etc/msmtprc
+                echo "from ${MAIL_FROM}" | silent tee -a /etc/msmtprc
             fi
             mail_recipients=$(echo "${MAIL_TO}" | tr "," "\n")
 
@@ -1005,7 +1005,7 @@ restic_repository() {
 
         print_info "Starting Backup Snapshot ${backup_job_log_suffix}"
         restic_repository=$(mktemp)
-        echo "${backup_job_repository_path}" > "${restic_repository}"
+        echo "${backup_job_repository_path}" | silent tee "${restic_repository}"
         restic \
                 --cache-dir "${CACHE_PATH}"  --cleanup-cache \
                 --repository-file "${restic_repository}" \
@@ -1261,7 +1261,7 @@ EOF
 
         restic_process_limiter restic 1 check
         restic_repository=$(mktemp)
-        echo "${check_job_repository_path}" > "${restic_repository}"
+        echo "${check_job_repository_path}" | silent tee "${restic_repository}"
         restic \
                 --cache-dir "${CACHE_PATH}"  --cleanup-cache \
                 --repository-file "${restic_repository}" \
@@ -1554,7 +1554,7 @@ EOF
 
         print_info "Starting cleanup of old backups"
         restic_repository=$(mktemp)
-        echo "${cleanup_job_repository_path}" > "${restic_repository}"
+        echo "${cleanup_job_repository_path}" | silent tee "${restic_repository}"
         restic \
                 --cache-dir "${CACHE_PATH}"  --cleanup-cache \
                 --repository-file "${restic_repository}" \
@@ -1789,7 +1789,7 @@ EOF
                 fi
 
                 restic_repository=$(mktemp)
-                echo "${repository_to_init}" | awk '{print $2}' > "${restic_repository}"
+                echo "${repository_to_init}" | awk '{print $2}' | silent tee "${restic_repository}"
                 silent restic \
                                 --cache-dir "${CACHE_PATH}"  --cleanup-cache \
                                 --repository-file "${restic_repository}" \
@@ -1806,7 +1806,7 @@ EOF
                     print_notice "[check_repository] Initializing Repository '$(echo "${repository_to_init}" | awk '{print $1}')'"
 
                     restic_repository=$(mktemp)
-                    echo "${repository_to_init}" | awk '{print $2}' > "${restic_repository}"
+                    echo "${repository_to_init}" | awk '{print $2}' | silent tee "${restic_repository}"
 
                     silent restic \
                                     --cache-dir "${CACHE_PATH}"  --cleanup-cache \
@@ -1819,7 +1819,7 @@ EOF
                         print_error "Failed to init the repository: '$(echo "${repository_to_init}" | awk '{print $1}')':"
 
                         restic_repository=$(mktemp)
-                        echo "${repository_to_init}" | awk '{print $2}' > "${restic_repository}"
+                        echo "${repository_to_init}" | awk '{print $2}' | silent tee "${restic_repository}"
                         restic \
                                 --cache-dir "${CACHE_PATH}"  --cleanup-cache \
                                 --repository-file "${restic_repository}" \
@@ -1899,7 +1899,7 @@ EOF
         fi
 
         restic_repository=$(mktemp)
-        echo "${inventory_job_repository_path}" > "${restic_repository}"
+        echo "${inventory_job_repository_path}" | silent tee "${restic_repository}"
         restic_process_limiter restic 1 inventory
         restic \
                 --cache-dir "${CACHE_PATH}"  --cleanup-cache \
@@ -2090,7 +2090,7 @@ EOF
 
         restic_process_limiter restic 1 prune
         restic_repository=$(mktemp)
-        echo "${prune_job_repository_path}" > "${restic_repository}"
+        echo "${prune_job_repository_path}" | silent tee "${restic_repository}"
         restic \
                 --cache-dir "${CACHE_PATH}"  --cleanup-cache \
                 --repository-file "${restic_repository}" \
@@ -2275,7 +2275,7 @@ EOF
 
         if var_true "${DEBUG_MODE}" || [ "${CONTAINER_LOG_LEVEL,,}" = "debug" ]; then
             unlock_command_string="restic --cache-dir ${CACHE_PATH} --repo $(redact_sensitive ${unlock_job_repository_path}) unlock ${unlock_job_args}"
-            print_debug "Command execution string: '${command_string}'"
+            print_debug "Command execution string: '${unlock_command_string}'"
             unlock_job_file_log_lines+=("## Debug Command String:               ${unlock_command_string}")
         fi
 
@@ -2284,7 +2284,7 @@ EOF
         fi
 
         restic_repository=$(mktemp)
-        echo "${unlock_job_repository_path}" > "${restic_repository}"
+        echo "${unlock_job_repository_path}" | silent tee "${restic_repository}"
         restic_process_limiter restic 1 unlock
         restic \
                 --cache-dir "${CACHE_PATH}"  --cleanup-cache \
@@ -2441,31 +2441,31 @@ restic_setup_container_mode() {
             case "${mode,,}" in
                 "backup" )
                     print_debug "Enabling Container Mode for: BACKUP"
-                    echo "ENABLE_BACKUP=TRUE" >> /container/state/restic/CONTAINER_MODE
+                    echo "ENABLE_BACKUP=TRUE" | silent tee -a /container/state/restic/CONTAINER_MODE
                 ;;
                 "check" )
                     print_debug "Enabling Container Mode for: CHECK"
-                    echo "ENABLE_CHECK=TRUE" >> /container/state/restic/CONTAINER_MODE
+                    echo "ENABLE_CHECK=TRUE" | silent tee -a /container/state/restic/CONTAINER_MODE
                 ;;
                 "cleanup" )
                     print_debug "Enabling Container Mode for: CLEANUP"
-                    echo "ENABLE_CLEANUP=TRUE" >> /container/state/restic/CONTAINER_MODE
+                    echo "ENABLE_CLEANUP=TRUE" | silent tee -a /container/state/restic/CONTAINER_MODE
                 ;;
                 "inventory" )
                     print_debug "Enabling Container Mode for: INVENTORY"
-                    echo "ENABLE_INVENTORY=TRUE" >> /container/state/restic/CONTAINER_MODE
+                    echo "ENABLE_INVENTORY=TRUE" | silent tee -a /container/state/restic/CONTAINER_MODE
                 ;;
                 "prune" )
                     print_debug "Enabling Container Mode for: PRUNE"
-                    echo "ENABLE_PRUNE=TRUE" >> /container/state/restic/CONTAINER_MODE
+                    echo "ENABLE_PRUNE=TRUE" | silent tee -a /container/state/restic/CONTAINER_MODE
                 ;;
                 "server" )
                     print_debug "Enabling Container Mode for: SERVER"
-                    echo "ENABLE_SERVER=TRUE" >> /container/state/restic/CONTAINER_MODE
+                    echo "ENABLE_SERVER=TRUE" | silent tee -a /container/state/restic/CONTAINER_MODE
                 ;;
                 "standalone" | "manual" )
                     print_debug "Enabling Container Mode for: STANDALONE"
-                    echo "ENABLE_STANDALONE=TRUE" >> /container/state/restic/CONTAINER_MODE
+                    echo "ENABLE_STANDALONE=TRUE" | silent tee -a /container/state/restic/CONTAINER_MODE
                 ;;
                 *)
                     print_error "Unknown 'MODE' environment variable - exitting.."
