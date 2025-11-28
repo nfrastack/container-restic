@@ -8,7 +8,11 @@ prepare_service
 SERVICE_NAME="restic-nginx-preloader"
 
 if [[ -z "${ENABLE_SERVER}" || "${ENABLE_SERVER,,}" = "false" ]]; then
-    echo "FALSE" > /var/run/s6/basedir/env/ENABLE_NGINX
+    service_stop 10-nginx
+    service_stop 11-nginx-config-reload
+    rm -rf /etc/zabbix/zabbix_agentd.conf.d/nginx.conf
+    rm -rf /container/init/init.d/10-nginx
+    rm -rf /container/init/init.d/11-*
 fi
 
-#liftoff
+liftoff
