@@ -1,0 +1,14 @@
+#!/command/with-contenv bash
+# SPDX-FileCopyrightText: © 2025 Nfrastack <code@nfrastack.com>
+#
+# SPDX-License-Identifier: MIT
+
+source /container/base/functions/container/init
+prepare_service
+SERVICE_NAME="restic-nginx-preloader"
+
+if [[ -z "${ENABLE_SERVER}" || "${ENABLE_SERVER,,}" = "false" ]]; then
+    echo "FALSE" > /var/run/s6/basedir/env/ENABLE_NNGINX
+fi
+
+#liftoff
