@@ -8,7 +8,7 @@ prepare_service
 SERVICE_NAME="restic-nginx-preloader"
 
 if [[ -z "${ENABLE_SERVER}" || "${ENABLE_SERVER,,}" = "false" ]]; then
-    echo "FALSE" > /var/run/s6/basedir/env/ENABLE_NNGINX
+    echo "FALSE" > /var/run/s6/basedir/env/ENABLE_NGINX
 fi
 
 #liftoff
