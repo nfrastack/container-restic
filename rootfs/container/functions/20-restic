@@ -38,6 +38,10 @@ restic_bootstrap_filesystem() {
     esac
 }
 
+redact_sensitive() {
+    echo "${1}" | sed -E "s#(://[^:/]+:)[^@]+@#\1REDACTED@#g"
+}
+
 restic_bootstrap_variables() {
     backup_init() {
         backup_instance_number=${1}
@@ -990,9 +994,9 @@ restic_repository() {
         fi
 
         if var_true "${DEBUG_MODE}" || [ "${CONTAINER_LOG_LEVEL,,}" = "debug" ]; then
-            command_string="restic --cache-dir ${CACHE_PATH} --repo ${backup_job_repository_path} backup --host ${_restic_hostname} --tag auto ${backup_job_args} ${backup_job_snapshot_args}"
-            print_info "Command execution string: '${command_string}'"
-            backup_job_file_log_lines+=("## Debug Command String:               ${command_string}")
+            backup_command_string="restic --cache-dir ${CACHE_PATH} --repo $(redact_sensitive ${backup_job_repository_path}) backup --host ${_restic_hostname} --tag auto ${backup_job_args} ${backup_job_snapshot_args}"
+            print_debug "Command execution string: '${backup_command_string}'"
+            backup_job_file_log_lines+=("## Debug Command String:               ${backup_command_string}")
         fi
 
         if [ -n "${backup_job_hook_pre}" ]; then
@@ -1243,6 +1247,12 @@ EOF
             esac
             check_job_args+="--verbose=${check_job_verbosity_level} "
             check_job_file_log_lines+=("## Verbosity Level:                    ${check_job_verbosity_level}")
+        fi
+
+        if var_true "${DEBUG_MODE}" || [ "${CONTAINER_LOG_LEVEL,,}" = "debug" ]; then
+            check_command_string="restic --cache-dir ${CACHE_PATH} --repo $(redact_sensitive ${check_job_repository_path}) check ${check_job_args}"
+            print_debug "Command execution string: '${command_string}'"
+            check_job_file_log_lines+=("## Debug Command String:               ${check_command_string}")
         fi
 
         if [ -n "${check_job_hook_pre}" ]; then
@@ -1532,6 +1542,11 @@ EOF
             cleanup_job_file_log_lines+=("## Verbosity Level:                    ${cleanup_job_cleanup_verbosity_level}")
         fi
 
+        if var_true "${DEBUG_MODE}" || [ "${CONTAINER_LOG_LEVEL,,}" = "debug" ]; then
+            cleanup_command_string="restic --cache-dir ${CACHE_PATH} --repo $(redact_sensitive ${cleanup_job_repository_path}) forget ${cleanup_job_args}"
+            print_debug "Command execution string: '${cleanup_command_string}'"
+            cleanup_job_file_log_lines+=("## Debug Command String:               ${cleanup_command_string}")
+        fi
 
         if [ -n "${cleanup_job_hook_pre}" ]; then
             restic_hook pre cleanup
@@ -1873,6 +1888,12 @@ EOF
             inventory_job_log_suffix=${inventory_instance_number}
         fi
 
+        if var_true "${DEBUG_MODE}" || [ "${CONTAINER_LOG_LEVEL,,}" = "debug" ]; then
+            inventory_command_string="restic --cache-dir ${CACHE_PATH} --repo $(redact_sensitive ${inventory_job_repository_path}) snapshots ${inventory_job_args}"
+            print_debug "Command execution string: '${inventory_command_string}'"
+            inventory_job_file_log_lines+=("## Debug Command String:               ${inventory_command_string}")
+        fi
+
         if [ -n "${inventory_job_hook_pre}" ]; then
             restic_hook pre inventory
         fi
@@ -1968,8 +1989,7 @@ EOF
             esac
         fi
 
-
-        if [ -n "${inventory_job_hook_pre}" ]; then
+        if [ -n "${inventory_job_hook_post}" ]; then
             restic_hook post inventory
         fi
 
@@ -2058,11 +2078,12 @@ EOF
             prune_job_file_log_lines+=("## Verbosity Level:                    ${prune_job_verbosity_level}")
         fi
 
-        if var_true "${DEBUG_MODE}" || [ ${CONTAINER_LOG_LEVEL,,} = "debug" ]; then
-            prune_command_string="restic --repo ${prune_job_repository_path} prune ${prune_job_args}"
+        if var_true "${DEBUG_MODE}" || [ "${CONTAINER_LOG_LEVEL,,}" = "debug" ]; then
+            prune_command_string="restic --cache-dir ${CACHE_PATH} --repo $(redact_sensitive ${prune_job_repository_path}) prune ${prune_job_args}"
             print_debug "Command execution string: '${prune_command_string}'"
             prune_job_file_log_lines+=("## Debug Command String:               ${prune_command_string}")
         fi
+
         if [ -n "${prune_job_hook_pre}" ]; then
             restic_hook pre prune
         fi
@@ -2250,6 +2271,12 @@ EOF
             esac
             unlock_job_args+="--verbose=${unlock_job_verbosity_level} "
             unlock_job_file_log_lines+=("## Verbosity Level:                    ${unlock_job_verbosity_level}")
+        fi
+
+        if var_true "${DEBUG_MODE}" || [ "${CONTAINER_LOG_LEVEL,,}" = "debug" ]; then
+            unlock_command_string="restic --cache-dir ${CACHE_PATH} --repo $(redact_sensitive ${unlock_job_repository_path}) unlock ${unlock_job_args}"
+            print_debug "Command execution string: '${command_string}'"
+            unlock_job_file_log_lines+=("## Debug Command String:               ${unlock_command_string}")
         fi
 
         if [ -n "${unlock_job_hook_pre}" ]; then
