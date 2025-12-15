@@ -1106,14 +1106,14 @@ EOF
         ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${backup_process_start_time}" +'%Y%m%d_%H%M%S')"-backup-"${backup_job_log_suffix}".log ../latest-backup-"${backup_job_log_suffix}".log
 
         backup_job_backup_summary_files=$(grep "^Files:" /tmp/"${backup_instance_number}"-backup-"${backup_routines_start_time}".log | xargs | sed "s|Files:||g")
-        backup_job_backup_summary_files_new=$(echo "${backup_job_backup_summary_files}" | awk '{print $1}')
-        backup_job_backup_summary_files_changed=$(echo "${backup_job_backup_summary_files}" | awk '{print $3}')
-        backup_job_backup_summary_files_unmodified=$(echo "${backup_job_backup_summary_files}" | awk '{print $5}')
+        backup_job_backup_summary_files_new=$(echo "${backup_job_backup_summary_files}" | awk '{print $1}'); backup_job_backup_summary_files_new=${backup_job_backup_summary_files_new:-0}
+        backup_job_backup_summary_files_changed=$(echo "${backup_job_backup_summary_files}" | awk '{print $3}'); backup_job_backup_summary_files_changed=${backup_job_backup_summary_files_changed:-0}
+        backup_job_backup_summary_files_unmodified=$(echo "${backup_job_backup_summary_files}" | awk '{print $5}'); backup_job_backup_summary_files_unmodified=${backup_job_backup_summary_files_unmodified:-0}
         backup_job_backup_summary_directory=$(grep "^Dirs:" /tmp/"${backup_instance_number}"-backup-"${backup_routines_start_time}".log | xargs | sed "s|Dirs:||g")
-        backup_job_backup_summary_directory_new=$(echo "${backup_job_backup_summary_directory}" | awk '{print $1}')
-        backup_job_backup_summary_directory_changed=$(echo "${backup_job_backup_summary_directory}" | awk '{print $3}')
-        backup_job_backup_summary_directory_unmodified=$(echo "${backup_job_backup_summary_directory}" | awk '{print $5}')
-        backup_job_backup_summary_added=$(grep "^Added to the repository:" /tmp/"${backup_instance_number}"-backup-"${backup_routines_start_time}".log | xargs | sed "s|Added to the repository:||g" | tr "," "\n")
+        backup_job_backup_summary_directory_new=$(echo "${backup_job_backup_summary_directory}" | awk '{print $1}'); backup_job_backup_summary_directory_new=${backup_job_backup_summary_directory_new:-0}
+        backup_job_backup_summary_directory_changed=$(echo "${backup_job_backup_summary_directory}" | awk '{print $3}'); backup_job_backup_summary_directory_changed=${backup_job_backup_summary_directory_changed:-0}
+        backup_job_backup_summary_directory_unmodified=$(echo "${backup_job_backup_summary_directory}" | awk '{print $5}'); backup_job_backup_summary_directory_unmodified=${backup_job_backup_summary_directory_unmodified:-0}
+        backup_job_backup_summary_added=$(grep "^Added to the repository:" /tmp/"${backup_instance_number}"-backup-"${backup_routines_start_time}".log | xargs | sed "s|Added to the repository:||g" | tr "," "\n"); backup_job_backup_summary_added=${backup_job_backup_summary_added:-0}
         backup_job_backup_summary_added_size_bytes=$(echo "${backup_job_backup_summary_added}" | awk '{print$1 $2}')
         if [ "${backup_job_backup_summary_added_size_bytes}" = "0B" ] ; then
             backup_job_backup_summary_added_size_bytes=0
@@ -1127,7 +1127,7 @@ EOF
             backup_job_backup_summary_added_size_stored_bytes=$(echo "${backup_job_backup_summary_added}" | awk '{print$3 $4}' | sed -e "s|(||g" -e "s|)||g" | numfmt --from=iec-i --to=none --suffix=B 2>/dev/null| sed "s|B$||g")
         fi
         backup_job_backup_summary_processed=$(grep "^processed" /tmp/"${backup_instance_number}"-backup-"${backup_routines_start_time}".log | sed "s|processed||g" )
-        backup_job_backup_summary_proccessed_files=$(echo "${backup_job_backup_summary_processed}" | awk '{print $1}')
+        backup_job_backup_summary_proccessed_files=$(echo "${backup_job_backup_summary_processed}" | awk '{print $1}'); backup_job_backup_summary_proccessed_files=${backup_job_backup_summary_proccessed_files:-0}
         backup_job_backup_summary_processed_size_bytes=$(echo "${backup_job_backup_summary_processed}" | awk '{print $3 $4}')
         if [ "${backup_job_backup_summary_processed_size_bytes}" = "0B" ] ; then
             backup_job_backup_summary_processed_size_bytes=0
@@ -1343,12 +1343,12 @@ EOF
         ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log ../latest-check-"${check_job_log_suffix}".log
 
         if grep -q "^pack .* not referenced in any index" /tmp/"${check_instance_number}"-check-"${check_routines_start_time}".log ; then
-            check_job_pack_unreferenced_count=$(grep "^pack .* not referenced in any index" /tmp/"${check_instance_number}"-check-"${check_routines_start_time}".log | wc -l)
+            check_job_pack_unreferenced_count=$(grep "^pack .* not referenced in any index" /tmp/"${check_instance_number}"-check-"${check_routines_start_time}".log | wc -l); check_job_pack_unreferenced_count=${check_job_pack_unreferenced_count:-0}
             print_debug "[check] ${check_job_pack_unreferenced_count} unreferenced packs detected"
         fi
 
         if grep -q "^\[.*\] .*% .* snapshots" /tmp/"${check_instance_number}"-check-"${check_routines_start_time}".log ; then
-            check_job_snapshots_processed=$(grep "^\[.*\] .*% .* snapshots" /tmp/"${check_instance_number}"-check-"${check_routines_start_time}".log | awk '{print $3}')
+            check_job_snapshots_processed=$(grep "^\[.*\] .*% .* snapshots" /tmp/"${check_instance_number}"-check-"${check_routines_start_time}".log | awk '{print $3}'); check_job_snapshots_processed=${check_job_snapshots_processed:-0}
             print_debug "[check] Processed ${check_job_snapshots_processed}"
         fi
 
@@ -1609,22 +1609,15 @@ EOF
             ;;
         esac
 
-        cleanup_job_stats_snapshots_removed=$(grep '^[0-9]. snapshots have been removed' /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '{print $1}')
-        if [ "${cleanup_job_stats_snapshots_removed}" = "" ] ; then cleanup_job_stats_snapshots_removed=0 ; fi
+        cleanup_job_stats_snapshots_removed=$(grep '^[0-9]. snapshots have been removed' /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '{print $1}'); cleanup_job_stats_snapshots_removed=${cleanup_job_stats_snapshots_removed:-0}
 
         if var_true "${cleanup_job_auto_prune}" ; then
-            cleanup_job_stats_prune_packs_processed=$(cat /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '/searching used packs.../,/.* \/ .* packs processed/' | tail -n 1 | awk '{print $5}')
-            if [ "${cleanup_job_stats_prune_packs_processed}" = "" ] ; then cleanup_job_stats_prune_packs_processed=0 ; fi
-            cleanup_job_stats_prune_packs_keep=$(grep "^to keep: .*[0-9]. packs" /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '{print $3}')
-            if [ "${cleanup_job_stats_prune_packs_keep}" = "" ] ; then cleanup_job_stats_prune_packs_keep=0 ; fi
-            cleanup_job_stats_prune_packs_repack=$(grep "^to repack: .*[0-9]. packs" /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '{print $3}')
-            if [ "${cleanup_job_stats_prune_packs_repack}" = "" ] ; then cleanup_job_stats_prune_packs_repack=0 ; fi
-            cleanup_job_stats_prune_packs_delete=$(grep "^to delete: .*[0-9]. packs" /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '{print $3}')
-            if [ "${cleanup_job_stats_prune_packs_delete}" = "" ] ; then cleanup_job_stats_prune_packs_delete=0 ; fi
-            cleanup_job_stats_prune_packs_delete_unreferenced=$(grep "^to delete: .*[0-9]. unreferenced packs" /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '{print $3}')
-            if [ "${cleanup_job_stats_prune_packs_delete_unreferenced}" = "" ] ; then cleanup_job_stats_prune_packs_delete_unreferenced=0 ; fi
-            cleanup_job_stats_prune_packs_delete_old=$(cat /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '/removing .* old packs$/,/.*\/ .* files deleted/' | tail -n 1 | awk '{print $5}')
-            if [ "${cleanup_job_stats_prune_packs_delete_old}" = "" ] ; then cleanup_job_stats_prune_packs_delete_old=0 ; fi
+            cleanup_job_stats_prune_packs_processed=$(cat /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '/searching used packs.../,/.* \/ .* packs processed/' | tail -n 1 | awk '{print $5}'); cleanup_job_stats_prune_packs_processed=${cleanup_job_stats_prune_packs_processed:-0}
+            cleanup_job_stats_prune_packs_keep=$(grep "^to keep: .*[0-9]. packs" /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '{print $3}'); cleanup_job_stats_prune_packs_keep=${cleanup_job_stats_prune_packs_keep:-0}
+            cleanup_job_stats_prune_packs_repack=$(grep "^to repack: .*[0-9]. packs" /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '{print $3}'); cleanup_job_stats_prune_packs_repack=${cleanup_job_stats_prune_packs_repack:-0}
+            cleanup_job_stats_prune_packs_delete=$(grep "^to delete: .*[0-9]. packs" /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '{print $3}'); cleanup_job_stats_prune_packs_delete=${cleanup_job_stats_prune_packs_delete:-0}
+            cleanup_job_stats_prune_packs_delete_unreferenced=$(grep "^to delete: .*[0-9]. unreferenced packs" /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '{print $3}'); cleanup_job_stats_prune_packs_delete_unreferenced=${cleanup_job_stats_prune_packs_delete_unreferenced:-0}
+            cleanup_job_stats_prune_packs_delete_old=$(cat /tmp/${cleanup_instance_number}-cleanup-${cleanup_routines_start_time}.log | awk '/removing .* old packs$/,/.*\/ .* files deleted/' | tail -n 1 | awk '{print $5}'); cleanup_job_stats_prune_packs_delete_old=${cleanup_job_stats_prune_packs_delete_old:-0}
         fi
 
         cleanup_job_file_log_lines+=("")
@@ -1958,7 +1951,6 @@ EOF
         inventory_job_file_log_lines+=("### Inventory Details")
         inventory_job_file_log_lines+=("$(cat /tmp/${inventory_instance_number}-inventory-${inventory_routines_start_time}.log | awk '/ID/,/snapshots/')")
 
-        # Join log lines into string
         inventory_job_file_log=$(IFS=$'\n'; echo "${inventory_job_file_log_lines[*]}")
 
 
@@ -1972,7 +1964,7 @@ EOF
             ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${inventory_process_start_time}" +'%Y%m%d_%H%M%S')"-inventory-${inventory_job_log_suffix}.log ../latest-inventory-${inventory_job_log_suffix}.log
         fi
 
-        inventory_job_snapshots_total=$(cat /tmp/"${inventory_instance_number}"-inventory-"${inventory_routines_start_time}".log  | grep -E "[0-9]. snapshots$" | awk '{print $1}')
+        inventory_job_snapshots_total=$(cat /tmp/"${inventory_instance_number}"-inventory-"${inventory_routines_start_time}".log  | grep -E "[0-9]. snapshots$" | awk '{print $1}'); inventory_job_snapshots_total=${inventory_job_snapshots_total:-0}
         if var_true "${CONTAINER_ENABLE_MONITORING}" ; then
             source /container/base/defaults/*-monitoring
             case "${CONTAINER_MONITORING_BACKEND,,}" in
@@ -2168,12 +2160,12 @@ EOF
         cd "${LOG_PATH%/}"/"$(date +'%Y%m%d')"
         ln -sf "$(date +'%Y%m%d')"/"$(date -d @"${prune_process_start_time}" +'%Y%m%d_%H%M%S')"-prune-"${prune_job_log_suffix}".log ../latest-prune-"${prune_job_log_suffix}".log
 
-        prune_job_packs_reviewed=$(awk '/collecting packs for deletion and repacking/,/packs processed/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $11}')
-        prune_job_packs_deleted_unreferenced=$(awk '/deleting unreferenced packs/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $8}')
-        prune_job_packs_repacked=$(awk '/repacking packs/,/packs processed/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $7}')
-        prune_job_packs_reindexed=$(awk '/rebuilding index/,/packs processed/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $7}')
-        prune_job_index_deleted_obsolete=$(awk '/deleting obsolete index files/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $9}')
-        prune_job_packs_deleted_old=$(awk '/removing .* old packs/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $9}')
+        prune_job_packs_reviewed=$(awk '/collecting packs for deletion and repacking/,/packs processed/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $11}'); prune_job_packs_reviewed=${prune_job_packs_reviewed:-0}
+        prune_job_packs_deleted_unreferenced=$(awk '/deleting unreferenced packs/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $8}'); prune_job_packs_deleted_unreferenced=${prune_job_packs_deleted_unreferenced:-0}
+        prune_job_packs_repacked=$(awk '/repacking packs/,/packs processed/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $7}'); prune_job_packs_repacked=${prune_job_packs_repacked:-0}
+        prune_job_packs_reindexed=$(awk '/rebuilding index/,/packs processed/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $7}'); prune_job_packs_reindexed=${prune_job_packs_reindexed:-0}
+        prune_job_index_deleted_obsolete=$(awk '/deleting obsolete index files/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $9}'); prune_job_index_deleted_obsolete=${prune_job_index_deleted_obsolete:-0}
+        prune_job_packs_deleted_old=$(awk '/removing .* old packs/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $10}'); prune_job_packs_deleted_old=${prune_job_packs_deleted_old:-0}
 
         if var_true "${CONTAINER_ENABLE_MONITORING}" ; then
             source /container/base/defaults/*-monitoring

@@ -20,7 +20,7 @@ LABEL \
 ARG \
     RESTIC_VERSION="v0.18.1" \
     RESTIC_REST_SERVER_VERSION="v0.14.0" \
-    R_CLONE_VERSION="v1.72.0" \
+    R_CLONE_VERSION="v1.72.1" \
     RESTIC_REPO_URL="https://github.com/restic/restic" \
     RESTIC_REST_SERVER_REPO_URL="https://github.com/restic/rest-server" \
     R_CLONE_REPO_URL="https://github.com/rclone/rclone"
