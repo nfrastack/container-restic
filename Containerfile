@@ -45,7 +45,7 @@ ENV \
     \
     RESTIC_RUN_DEPS_ALPINE=" \
                                 apache2-utils \
-                                #coreutils \
+                                coreutils \
                                 fuse3 \
                                 s-nail \
                                 tar \
