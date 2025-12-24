@@ -47,7 +47,7 @@ restic_bootstrap_variables() {
         backup_instance_number=${1}
         SERVICE_NAME=backup${backup_instance_number}
         backup_instance_vars=$(mktemp)
-        set -o posix ; set | grep -oE "^backup_job_.*=" | tr " " "\n" | grep -oE ".*=" | sed "/--/d" | silent tee "${backup_instance_vars}"
+        set -o posix ; set | grep -oE "^backup_job_.*=" | grep -oE ".*=" | sed "/--/d" | silent tee "${backup_instance_vars}"
         while read -r backup_instance_var ; do
             unset "${backup_instance_var%%=*}"
         done < "${backup_instance_vars}"
@@ -76,14 +76,13 @@ restic_bootstrap_variables() {
             export backup_job_repository_path="${REPOSITORY_PATH}"
         fi
 
-        set -o posix ; set | grep -E "^BACKUP${backup_instance_number}_|^DEFAULT_BACKUP_" | tr " " "\n" | silent tee "${backup_instance_vars}"
+        set -o posix ; set | grep -E "^BACKUP${backup_instance_number}_|^DEFAULT_BACKUP_" | silent tee "${backup_instance_vars}"
 
         transform_backup_instance_variable() {
-            if grep -q "^BACKUP${1}_${2}=" "${backup_instance_vars}" && [ "$(grep "^BACKUP${1}_${2}=" "${backup_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^BACKUP${1}_${2}=" "${backup_instance_vars}" | cut -d = -f2-)"
-            elif grep -q "^DEFAULT_BACKUP_${2}=" "${backup_instance_vars}" && [ "$(grep "^DEFAULT_BACKUP_${2}=" "${backup_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^DEFAULT_BACKUP_${2}=" "${backup_instance_vars}" | cut -d = -f2-)"
-            fi
+            local pattern1="^BACKUP${1}_${2}=" pattern2="^DEFAULT_BACKUP_${2}="
+            local value
+            value=$(grep -E "($pattern1|$pattern2)" "${backup_instance_vars}" | head -1 | sed 's/^[^=]*=//; s/^'\''//; s/'\''$//')
+            if [ -n "${value}" ] && [ "${value}" != "unset" ]; then export "${3}=$(printf '%s' "${value}")" ; fi
         }
 
         transform_backup_instance_variable "${backup_instance_number}" REPOSITORY_PATH backup_job_respository_path
@@ -107,7 +106,7 @@ restic_bootstrap_variables() {
         check_instance_number=${1}
         SERVICE_NAME=check${check_instance_number}
         check_instance_vars=$(mktemp)
-        set -o posix ; set | grep -oE "^check_job_.*=" | tr " " "\n" | grep -oE ".*=" | sed "/--/d" | silent tee "${check_instance_vars}"
+        set -o posix ; set | grep -oE "^check_job_.*=" | grep -oE ".*=" | sed "/--/d" | silent tee "${check_instance_vars}"
         while read -r check_instance_var ; do
             unset "${check_instance_var%%=*}"
         done < "${check_instance_vars}"
@@ -120,7 +119,7 @@ restic_bootstrap_variables() {
                                 REPOSITORY_PASS \
                                 REPOSITORY_PATH
 
-        set -o posix ; set | grep -E "^CHECK${check_instance_number}_|^DEFAULT_CHECK_" | tr " " "\n" | silent tee "${check_instance_vars}"
+        set -o posix ; set | grep -E "^CHECK${check_instance_number}_|^DEFAULT_CHECK_" | silent tee "${check_instance_vars}"
 
         if [ -v "$(echo CHECK${check_instance_number}_REPOSITORY_PASS)" ] && [ "$(set -o posix; set | grep -E "^CHECK${check_instance_number}_REPOSITORY_PASS" | cut -d = -f 2)" != "unset" ]; then
             export RESTIC_PASSWORD=$(set -o posix; set | grep -E "^CHECK${check_instance_number}_REPOSITORY_PASS" | cut -d = -f 2)
@@ -139,11 +138,10 @@ restic_bootstrap_variables() {
         fi
 
         transform_check_instance_variable() {
-            if grep -q "^CHECK${1}_${2}=" "${check_instance_vars}" && [ "$(grep "^CHECK${1}_${2}=" "${check_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^CHECK${1}_${2}=" "${check_instance_vars}" | cut -d = -f2-)"
-            elif grep -q "^DEFAULT_CHECK_${2}=" "${check_instance_vars}" && [ "$(grep "^DEFAULT_CHECK_${2}=" "${check_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^DEFAULT_CHECK_${2}=" "${check_instance_vars}" | cut -d = -f2-)"
-            fi
+            local pattern1="^CHECK${1}_${2}=" pattern2="^DEFAULT_CHECK_${2}="
+            local value
+            value=$(grep -E "($pattern1|$pattern2)" "${check_instance_vars}" | head -1 | sed 's/^[^=]*=//; s/^'\''//; s/'\''$//')
+            if [ -n "${value}" ] && [ "${value}" != "unset" ]; then export "${3}=$(printf '%s' "${value}")" ; fi
         }
 
         transform_check_instance_variable "${check_instance_number}" ARGS check_job_check_args
@@ -165,7 +163,7 @@ restic_bootstrap_variables() {
         cleanup_instance_number=${1}
         SERVICE_NAME=cleanup${cleanup_instance_number}
         cleanup_instance_vars=$(mktemp)
-        set -o posix ; set | grep -oE "^cleanup_job_.*=" | tr " " "\n" | grep -oE ".*=" | sed "/--/d" | silent tee "${cleanup_instance_vars}"
+        set -o posix ; set | grep -oE "^cleanup_job_.*=" | grep -oE ".*=" | sed "/--/d" | silent tee "${cleanup_instance_vars}"
         while read -r cleanup_instance_var ; do
             unset "${cleanup_instance_var%%=*}"
         done < "${cleanup_instance_vars}"
@@ -178,7 +176,7 @@ restic_bootstrap_variables() {
                                 REPOSITORY_PASS \
                                 REPOSITORY_PATH
 
-        set -o posix ; set | grep -E "^CLEANUP${cleanup_instance_number}_|^DEFAULT_CLEANUP_" | tr " " "\n" | silent tee "${cleanup_instance_vars}"
+        set -o posix ; set | grep -E "^CLEANUP${cleanup_instance_number}_|^DEFAULT_CLEANUP_" | silent tee "${cleanup_instance_vars}"
 
         if [ -v "$(echo CLEANUP${cleanup_instance_number}_REPOSITORY_PASS)" ] && [ "$(set -o posix; set | grep -E "^CLEANUP${cleanup_instance_number}_REPOSITORY_PASS" | cut -d = -f 2)" != "unset" ]; then
             export RESTIC_PASSWORD=$(set -o posix; set | grep -E "^CLEANUP${cleanup_instance_number}_REPOSITORY_PASS" | cut -d = -f 2)
@@ -197,11 +195,10 @@ restic_bootstrap_variables() {
         fi
 
         transform_cleanup_instance_variable() {
-            if grep -q "^CLEANUP${1}_${2}=" "${cleanup_instance_vars}" && [ "$(grep "^CLEANUP${1}_${2}=" "${cleanup_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^CLEANUP${1}_${2}=" "${cleanup_instance_vars}" | cut -d = -f2-)"
-            elif grep -q "^DEFAULT_CLEANUP_${2}=" "${cleanup_instance_vars}" && [ "$(grep "^DEFAULT_CLEANUP_${2}=" "${cleanup_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^DEFAULT_CLEANUP_${2}=" "${cleanup_instance_vars}" | cut -d = -f2-)"
-            fi
+            local pattern1="^CLEANUP${1}_${2}=" pattern2="^DEFAULT_CLEANUP_${2}="
+            local value
+            value=$(grep -E "($pattern1|$pattern2)" "${cleanup_instance_vars}" | head -1 | sed 's/^[^=]*=//; s/^'\''//; s/'\''$//')
+            if [ -n "${value}" ] && [ "${value}" != "unset" ]; then export "${3}=$(printf '%s' "${value}")" ; fi
         }
 
         transform_cleanup_instance_variable "${cleanup_instance_number}" AUTO_PRUNE cleanup_job_auto_prune
@@ -243,7 +240,7 @@ restic_bootstrap_variables() {
                                 REPOSITORY_PASS \
                                 REPOSITORY_PATH
 
-        set -o posix ; set | grep -oE "^inventory_job_.*=" | tr " " "\n" | grep -oE ".*=" | sed "/--/d" | silent tee "${inventory_instance_vars}"
+        set -o posix ; set | grep -oE "^inventory_job_.*=" | grep -oE ".*=" | sed "/--/d" | silent tee "${inventory_instance_vars}"
         while read -r inventory_instance_var ; do
             unset "${inventory_instance_var%%=*}"
         done < "${inventory_instance_vars}"
@@ -264,15 +261,15 @@ restic_bootstrap_variables() {
             export inventory_job_repository_path="${REPOSITORY_PATH}"
         fi
 
-        set -o posix ; set | grep -E "^INVENTORY${inventory_instance_number}_|^DEFAULT_INVENTORY_" | tr " " "\n" | silent tee "${inventory_instance_vars}"
+        set -o posix ; set | grep -E "^INVENTORY${inventory_instance_number}_|^DEFAULT_INVENTORY_" | silent tee "${inventory_instance_vars}"
 
         transform_inventory_instance_variable() {
-            if grep -q "^INVENTORY${1}_${2}=" "${inventory_instance_vars}" && [ "$(grep "^INVENTORY${1}_${2}=" "${inventory_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^INVENTORY${1}_${2}=" "${inventory_instance_vars}" | cut -d = -f2-)"
-            elif grep -q "^DEFAULT_INVENTORY_${2}=" "${inventory_instance_vars}" && [ "$(grep "^DEFAULT_INVENTORY_${2}=" "${inventory_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^DEFAULT_INVENTORY_${2}=" "${inventory_instance_vars}" | cut -d = -f2-)"
-            fi
+            local pattern1="^INVENTORY${1}_${2}=" pattern2="^DEFAULT_INVENTORY_${2}="
+            local value
+            value=$(grep -E "($pattern1|$pattern2)" "${inventory_instance_vars}" | head -1 | sed 's/^[^=]*=//; s/^'\''//; s/'\''$//')
+            if [ -n "${value}" ] && [ "${value}" != "unset" ]; then export "${3}=$(printf '%s' "${value}")" ; fi
         }
+
         transform_inventory_instance_variable "${inventory_instance_number}" NAME inventory_job_inventory_name
         transform_inventory_instance_variable "${inventory_instance_number}" GROUP_BY inventory_job_group_by
         transform_inventory_instance_variable "${inventory_instance_number}" HOOK_POST inventory_job_hook_post
@@ -286,7 +283,7 @@ restic_bootstrap_variables() {
         prune_instance_number=${1}
         SERVICE_NAME=prune${prune_instance_number}
         prune_instance_vars=$(mktemp)
-        set -o posix ; set | grep -oE "^prune_job_.*=" | tr " " "\n" | grep -oE ".*=" | sed "/--/d" | silent tee "${prune_instance_vars}"
+        set -o posix ; set | grep -oE "^prune_job_.*=" | grep -oE ".*=" | sed "/--/d" | silent tee "${prune_instance_vars}"
         while read -r prune_instance_var ; do
             unset "${prune_instance_var%%=*}"
         done < "${prune_instance_vars}"
@@ -307,14 +304,13 @@ restic_bootstrap_variables() {
             export prune_job_repository_path="${REPOSITORY_PATH}"
         fi
 
-        set -o posix ; set | grep -E "^PRUNE${prune_instance_number}_|^DEFAULT_PRUNE_" | tr " " "\n" | silent tee "${prune_instance_vars}"
+        set -o posix ; set | grep -E "^PRUNE${prune_instance_number}_|^DEFAULT_PRUNE_" | silent tee "${prune_instance_vars}"
 
         transform_prune_instance_variable() {
-            if grep -q "^PRUNE${1}_${2}=" "${prune_instance_vars}" && [ "$(grep "^PRUNE${1}_${2}=" "${prune_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^PRUNE${1}_${2}=" "${prune_instance_vars}" | cut -d = -f2-)"
-            elif grep -q "^DEFAULT_PRUNE_${2}=" "${prune_instance_vars}" && [ "$(grep "^DEFAULT_PRUNE_${2}=" "${prune_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$3"="$(grep "^DEFAULT_PRUNE_${2}=" "${prune_instance_vars}" | cut -d = -f2-)"
-            fi
+            local pattern1="^PRUNE${1}_${2}=" pattern2="^DEFAULT_PRUNE_${2}="
+            local value
+            value=$(grep -E "($pattern1|$pattern2)" "${prune_instance_vars}" | head -1 | sed 's/^[^=]*=//; s/^'\''//; s/'\''$//')
+            if [ -n "${value}" ] && [ "${value}" != "unset" ]; then export "${3}=$(printf '%s' "${value}")" ; fi
         }
 
         transform_prune_instance_variable "${prune_instance_number}" ARGS prune_job_prune_args
@@ -338,7 +334,7 @@ restic_bootstrap_variables() {
         unlock_called_from_instance=${2}
         SERVICE_NAME=unlock
         unlock_instance_vars=$(mktemp)
-        set -o posix ; set | grep -oE "^unlock_job_.*=" | tr " " "\n" | grep -oE ".*=" | sed "/--/d" | silent tee "${unlock_instance_vars}"
+        set -o posix ; set | grep -oE "^unlock_job_.*=" | grep -oE ".*=" | sed "/--/d" | silent tee "${unlock_instance_vars}"
         while read -r unlock_instance_var ; do
             unset "${unlock_instance_var%%=*}"
         done < "${unlock_instance_vars}"
@@ -353,20 +349,19 @@ restic_bootstrap_variables() {
 
         if [ -v "$(echo "${unlock_called_from}""${unlock_called_from_instance}"_REPOSITORY_PATH)" ] && [ "$(set -o posix; set | grep -E "^${unlock_called_from}${unlock_called_from_instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
             export unlock_job_repository_path="$(set -o posix; set | grep -E "^${unlock_called_from}${unlock_called_from_instance}_REPOSITORY_PATH" | cut -d = -f 2)"
-        elif [ -v "$(echo DEFAULT_${unlock_called_from}_REPOSITORY_PATH)" ] && [ "$(grep -E "^$(echo DEFAULT_${unlock_called_from}_REPOSITORY_PATH)" | cut -d = -f 2)" != "unset" ] ; then
+        elif [ -v "$(echo DEFAULT_${unlock_called_from}_REPOSITORY_PATH)" ] && [ "$(grep -E "^$(echo DEFAULT_${unlock_called_from}_REPOSITORY_PATH)" | cut-d = -f 2)" != "unset" ] ; then
             export unlock_job_repository_path="$(grep -E "^$(echo DEFAULT_${unlock_called_from}_REPOSITORY_PATH)" | cut -d = -f 2)"
         elif [ -n "${REPOSITORY_PATH}" ] && [ "${REPOSITORY_PATH}" != "unset" ]; then
             export unlock_job_repository_path=${REPOSITORY_PATH}
         fi
 
-        set -o posix ; set | grep -E "^UNLOCK_|^DEFAULT_UNLOCK_" | tr " " "\n" | silent tee "${unlock_instance_vars}"
+        set -o posix ; set | grep -E "^UNLOCK_|^DEFAULT_UNLOCK_" | silent tee "${unlock_instance_vars}"
 
         transform_unlock_variable() {
-            if grep -q "^UNLOCK_${1}=" "${unlock_instance_vars}" && [ "$(grep "^UNLOCK_${1}=" "${unlock_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$2"="$(grep "^UNLOCK_${1}=" "${unlock_instance_vars}" | cut -d = -f2-)"
-            elif grep -q "^DEFAULT_UNLOCK_${1}=" "${unlock_instance_vars}" && [ "$(grep "^DEFAULT_UNLOCK_${1}=" "${unlock_instance_vars}" | cut -d = -f2)" != "unset" ]; then
-                export "$2"="$(grep "^DEFAULT_UNLOCK_${1}=" "${unlock_instance_vars}" | cut -d = -f2-)"
-            fi
+            local pattern1="^UNLOCK${1}_${2}=" pattern2="^DEFAULT_UNLOCK_${2}="
+            local value
+            value=$(grep -E "($pattern1|$pattern2)" "${unlock_instance_vars}" | head -1 | sed 's/^[^=]*=//; s/^'\''//; s/'\''$//')
+            if [ -n "${value}" ] && [ "${value}" != "unset" ]; then export "${3}=$(printf '%s' "${value}")" ; fi
         }
 
         transform_unlock_variable ARGS unlock_job_unlock_args
@@ -637,7 +632,7 @@ restic_hook() {
             check )
                 if [ -x "${check_job_hook_post}" ] ; then
                     print_notice "Executing post check custom script : '${check_job_hook_post}'"
-                    ## script HOSTNAME _restic_name TYPE INSTANCE_NUMBER NAME REPOSITORY_PATH ROUTINE_START_EPOCH PROCESS_START_EPOCH PROCESS_FINISH_EPOCH PROCESS_TOTAL_SECONDS EXITCODE LOGFILE PACKS_UNREFERENCED_COUNT SNAPSHOTS_PROCESSED
+                    ## script HOSTNAME _restic_name TYPE INSTANCE_NUMBER NAME REPOSITORY_PATH ROUTINE_START_EPOCH PROCESS_START_EPOCH PROCESS_FINISH_EPOCHPROCESS_TOTAL_SECONDS EXITCODE LOGFILE PACKS_UNREFERENCED_COUNT SNAPSHOTS_PROCESSED
                     "${check_job_hook_post}" "$(hostname)" "${_restic_hostname}" CHECK "${check_instance_number}" "${check_job_log_suffix}" "${check_job_repository_path}" "${check_routines_start_time}" "${check_process_start_time}" "${check_process_finish_time}" "${check_process_total_time}" "${exitcode_check}" "${LOG_PATH%/}"/"$(date +'%Y%m%d')"/"$(date -d @"${check_process_start_time}" +'%Y%m%d_%H%M%S')"-check-"${check_job_log_suffix}".log "${check_job_pack_unreferenced_count}" "${check_job_snapshots_processed}"
                 else
                     print_error "Can't run post check custom script: '${check_job_hook_post}' as its filesystem bit is not executible!"
@@ -716,7 +711,7 @@ restic_hook() {
                 if [ -x "${inventory_job_hook_pre}" ] ; then
                     print_notice "Executing pre inventory custom script : '${inventory_job_hook_pre}'"
                     ## script HOSTNAME _restic_hostname TYPE INSTANCE_NUMBER NAME REPOSITORY_PATH ROUTINE_START_EPOCH
-                    "${inventory_job_hook_pre}" "$(hostname)" "${_restic_hostname}" INVENTORY "${inventory_instance_number}" "${inventory_job_log_suffix}" "${inventory_job_repository_path}" "${inventory_routines_start_time}"
+                    "${inventory_job_hook_pre}" "$(hostname)" "${_restic_hostname}" INVENTORY "${inventory_instance_number}" "${inventory_job_log_suffix}""${inventory_job_repository_path}" "${inventory_routines_start_time}"
                 else
                     print_error "Can't run pre inventory custom script: '${inventory_job_hook_pre}' as its filesystem bit is not executible!"
                 fi
@@ -1223,7 +1218,7 @@ EOF
         fi
 
         if [ -n "${check_job_check_args}" ]; then
-            check_job_args+="${check_job_check_args}"
+            check_job_args+="${check_job_check_args} "
             check_job_file_log_lines+=("## Additional Arguments:               ${check_job_check_args}")
         fi
 
@@ -1251,7 +1246,7 @@ EOF
 
         if var_true "${DEBUG_MODE}" || [ "${CONTAINER_LOG_LEVEL,,}" = "debug" ]; then
             check_command_string="restic --cache-dir ${CACHE_PATH} --repo $(redact_sensitive ${check_job_repository_path}) check ${check_job_args}"
-            print_debug "Command execution string: '${command_string}'"
+            print_debug "Command execution string: '${check_command_string}'"
             check_job_file_log_lines+=("## Debug Command String:               ${check_command_string}")
         fi
 
@@ -1348,7 +1343,7 @@ EOF
         fi
 
         if grep -q "^\[.*\] .*% .* snapshots" /tmp/"${check_instance_number}"-check-"${check_routines_start_time}".log ; then
-            check_job_snapshots_processed=$(grep "^\[.*\] .*% .* snapshots" /tmp/"${check_instance_number}"-check-"${check_routines_start_time}".log | awk '{print $3}'); check_job_snapshots_processed=${check_job_snapshots_processed:-0}
+            check_job_snapshots_processed=$(grep "^\[.*\] .*% .* snapshots" /tmp/"${check_instance_number}"-check-"${check_routines_start_time}".log | awk'{print $3}'); check_job_snapshots_processed=${check_job_snapshots_processed:-0}
             print_debug "[check] Processed ${check_job_snapshots_processed}"
         fi
 
@@ -2016,7 +2011,7 @@ EOF
         fi
 
         if [ -n "${prune_job_prune_args}" ] ; then
-            prune_job_args+="${prune_job_prune_args}"
+            prune_job_args+="${prune_job_prune_args} "
             prune_job_file_log_lines+=("## Additional Arguments:               ${prune_job_prune_args}")
         fi
 
@@ -2165,7 +2160,7 @@ EOF
         prune_job_packs_repacked=$(awk '/repacking packs/,/packs processed/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $7}'); prune_job_packs_repacked=${prune_job_packs_repacked:-0}
         prune_job_packs_reindexed=$(awk '/rebuilding index/,/packs processed/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $7}'); prune_job_packs_reindexed=${prune_job_packs_reindexed:-0}
         prune_job_index_deleted_obsolete=$(awk '/deleting obsolete index files/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $9}'); prune_job_index_deleted_obsolete=${prune_job_index_deleted_obsolete:-0}
-        prune_job_packs_deleted_old=$(awk '/removing .* old packs/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log | xargs | awk '{print $10}'); prune_job_packs_deleted_old=${prune_job_packs_deleted_old:-0}
+        prune_job_packs_deleted_old=$(awk '/removing .* old packs/,/files deleted/' /tmp/${prune_instance_number}-prune-"${prune_routines_start_time}".log| xargs | awk '{print $10}'); prune_job_packs_deleted_old=${prune_job_packs_deleted_old:-0}
 
         if var_true "${CONTAINER_ENABLE_MONITORING}" ; then
             source /container/base/defaults/*-monitoring
@@ -2245,7 +2240,7 @@ EOF
         fi
 
         if [ -n "${unlock_job_unlock_args}" ] ; then
-            unlock_job_args+="${unlock_job_unlock_args}"
+            unlock_job_args+="${unlock_job_unlock_args} "
             unlock_job_file_log_lines+=("## Additional Arguments:               ${unlock_job_unlock_args}")
         fi
 
