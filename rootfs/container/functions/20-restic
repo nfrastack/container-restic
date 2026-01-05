@@ -349,7 +349,7 @@ restic_bootstrap_variables() {
 
         if [ -v "$(echo "${unlock_called_from}""${unlock_called_from_instance}"_REPOSITORY_PATH)" ] && [ "$(set -o posix; set | grep -E "^${unlock_called_from}${unlock_called_from_instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
             export unlock_job_repository_path="$(set -o posix; set | grep -E "^${unlock_called_from}${unlock_called_from_instance}_REPOSITORY_PATH" | cut -d = -f 2)"
-        elif [ -v "$(echo DEFAULT_${unlock_called_from}_REPOSITORY_PATH)" ] && [ "$(grep -E "^$(echo DEFAULT_${unlock_called_from}_REPOSITORY_PATH)" | cut-d = -f 2)" != "unset" ] ; then
+        elif [ -v "$(echo DEFAULT_${unlock_called_from}_REPOSITORY_PATH)" ] && [ "$(grep -E "^$(echo DEFAULT_${unlock_called_from}_REPOSITORY_PATH)" | cut -d = -f 2)" != "unset" ] ; then
             export unlock_job_repository_path="$(grep -E "^$(echo DEFAULT_${unlock_called_from}_REPOSITORY_PATH)" | cut -d = -f 2)"
         elif [ -n "${REPOSITORY_PATH}" ] && [ "${REPOSITORY_PATH}" != "unset" ]; then
             export unlock_job_repository_path=${REPOSITORY_PATH}
