@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
+redact_sensitive() {
+    echo "${1}" | sed -E "s#(://[^:/]+:)[^@]+@#\1REDACTED@#g"
+}
+
 restic_bootstrap_filesystem() {
     create_folder \
                     "${CACHE_PATH},\
@@ -27,7 +31,7 @@ restic_bootstrap_filesystem() {
 
     case "${LOG_TYPE,,}" in
         file )
-            echo "0 0 * * * /usr/local/sbin/logrotate_restic >/dev/null 2>&1" | silent tee /container/cron/restic_logrotate
+            echo "0 0 * * * /usr/local/bin/logrotate_restic >/dev/null 2>&1" | silent tee /container/cron/restic_logrotate
 
             if var_true "${ENABLE_SERVER}" ; then
                 sudo -u restic touch "${SERVER_LOG_PATH%/}"/"${SERVER_LOG_FILE}"
@@ -36,10 +40,6 @@ restic_bootstrap_filesystem() {
             fi
         ;;
     esac
-}
-
-redact_sensitive() {
-    echo "${1}" | sed -E "s#(://[^:/]+:)[^@]+@#\1REDACTED@#g"
 }
 
 restic_bootstrap_variables() {
