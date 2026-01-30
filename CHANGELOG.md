@@ -2,9 +2,9 @@
 
    ### Changed
       - Switch to nfrastack/container-nginx
-      - Alpine 3.22
+      - Alpine 3.23
       - Restic 0.18.1
-      - RClone 1.72.1
+      - RClone 1.73.0
 
 ## 1.2.33 2025-08-25 <dave at tiredofit dot ca>
 
