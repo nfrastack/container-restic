@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 Nfrastack <code@nfrastack.com>
+# SPDX-FileCopyrightText: © 2026 Nfrastack <code@nfrastack.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -20,7 +20,7 @@ LABEL \
 ARG \
     RESTIC_VERSION="v0.18.1" \
     RESTIC_REST_SERVER_VERSION="v0.14.0" \
-    R_CLONE_VERSION="v1.73.0" \
+    R_CLONE_VERSION="v1.73.1" \
     RESTIC_REPO_URL="https://github.com/restic/restic" \
     RESTIC_REST_SERVER_REPO_URL="https://github.com/restic/rest-server" \
     R_CLONE_REPO_URL="https://github.com/rclone/rclone"
@@ -30,13 +30,17 @@ COPY LICENSE /usr/src/container/LICENSE
 COPY README.md /usr/src/container/README.md
 
 ENV \
-    NGINX_SITE_ENABLED="restic-rest-server" \
-    NGINX_ENABLE_CREATE_SAMPLE_HTML=FALSE \
-    NGINX_WORKER_PROCESSES=1 \
     IMAGE_NAME="nfrastack/restic" \
     IMAGE_REPO_URL="https://github.com/nfrastack/container-restic/"
 
-    RUN echo "" && \
+RUN echo "" && \
+    BUILD_ENV=" \
+                 ENABLE_NGINX=FALSE \
+                 NGINX_SITE_ENABLED="restic-rest-server" \
+                 NGINX_MODE="proxy" \
+                 NGINX_PROXY_URL="http://localhost:[env:SERVER_LISTEN_PORT]" \
+              " \
+              && \
     RESTIC_BUILD_DEPS_ALPINE=" \
                                     binutils \
                                     git \
