@@ -20,7 +20,7 @@ LABEL \
 ARG \
     RESTIC_VERSION="v0.18.1" \
     RESTIC_REST_SERVER_VERSION="v0.14.0" \
-    R_CLONE_VERSION="v1.73.1" \
+    R_CLONE_VERSION="v1.73.2" \
     RESTIC_REPO_URL="https://github.com/restic/restic" \
     RESTIC_REST_SERVER_REPO_URL="https://github.com/restic/rest-server" \
     R_CLONE_REPO_URL="https://github.com/rclone/rclone"
@@ -35,10 +35,10 @@ ENV \
 
 RUN echo "" && \
     BUILD_ENV=" \
-                 ENABLE_NGINX=FALSE \
-                 NGINX_SITE_ENABLED="restic-rest-server" \
-                 NGINX_MODE="proxy" \
-                 NGINX_PROXY_URL="http://localhost:[env:SERVER_LISTEN_PORT]" \
+                 10-nginx/ENABLE_NGINX=FALSE \
+                 10-nginx/NGINX_SITE_ENABLED="restic-rest-server" \
+                 10-nginx/NGINX_MODE="proxy" \
+                 10-nginx/NGINX_PROXY_URL="http://localhost:[env:SERVER_LISTEN_PORT]" \
               " \
               && \
     RESTIC_BUILD_DEPS_ALPINE=" \
