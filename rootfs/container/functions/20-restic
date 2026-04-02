@@ -2202,7 +2202,7 @@ EOF
                         /etc/nginx/sites.available/restic-rest-server.conf \
                                                                             SERVER_LISTEN_PORT
 
-        sed -i -e "s|client_body_buffer_size .*;|client_body_buffer_size 20M;|g" /etc/nginx/nginx.conf
+        sed -i -e "s|client_body_buffer_size .*;|client_body_buffer_size 20M;|g" /etc/nginx/server.conf.d/http/client.conf
 
         if var_true "${SERVER_ENABLE_AUTHENTICATION}" && [ ! -s "${SERVER_PASSWORD_FILE}" ] ; then
             print_warn "[server] No Users setup in SERVER_PASSWORD_FILE - enter container and use 'server-user create' tool"
