@@ -78,6 +78,7 @@ RUN echo "" && \
     go run build.go && \
     strip rest-server && \
     cp rest-server /usr/local/bin/restic-rest-server && \
+    sed -i -e "s|client_body_buffer_size .*;|client_body_buffer_size 20M;|g" /container/data/nginx/templates/server/http-client.template
     container_build_log add "Restic REST Server" "${RESTIC_REST_SERVER_VERSION}" "${RESTIC_REST_SERVER_REPO_URL}" && \
     \
     clone_git_repo "${R_CLONE_REPO_URL}" "${R_CLONE_VERSION}" && \

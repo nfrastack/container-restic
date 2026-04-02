@@ -1,4 +1,4 @@
-## 1.3.0 2026-04-02 <code at nfastack dot com>
+## 1.3.0pre 2026-04-02 <code at nfastack dot com>
 
    ### Added
       - Swutch to nfrastack/nginx:8.x.x base
