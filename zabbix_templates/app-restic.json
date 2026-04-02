@@ -826,7 +826,7 @@
                                         ]
                                     },
                                     {
-                                        "uuid": "98fcf9922ec8434d97e1f676441c8a00",
+                                        "uuid": "98fcf9922ec8434d97e1f677551c8a00",
                                         "expression": "nodata(/Restic/restic.cleanup.start_date.[{#NAME}],5d)=1",
                                         "name": "[{#NAME}] No cleanup detected in 5 days",
                                         "priority": "DISASTER",
@@ -1023,7 +1023,7 @@
                                 ]
                             },
                             {
-                                "uuid": "a3ff0d854d644e8395a7962e11a50cc9",
+                                "uuid": "a3ff0d854d755e8395a7962e11a50cc9",
                                 "name": "[{#NAME}] Prune - Obselete Indexes Deleted",
                                 "type": "TRAP",
                                 "key": "restic.prune.index.deleted.obsolete.[{#NAME}]",
@@ -1086,7 +1086,7 @@
                                 ],
                                 "trigger_prototypes": [
                                     {
-                                        "uuid": "49a49d1088b442d7a936443413218cd4",
+                                        "uuid": "49a49d1088b442d7a937553413218cd4",
                                         "expression": "nodata(/Restic/restic.prune.start_date.[{#NAME}],2d)=1",
                                         "name": "[{#NAME}] No prune detected in 2 days",
                                         "priority": "AVERAGE",

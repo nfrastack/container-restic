@@ -414,7 +414,7 @@ restic_create_schedulers() {
             fi
             cp -R /container/data/restic/template-restic-backup /container/run/available/restic-backup"${instance}"
             sed -i "s|{{BACKUP_NUMBER}}|${instance}|g" /container/run/available/restic-backup"${instance}"/run
-            write_file /usr/local/bin/backup"${instance}"-now:644 <<EOF
+            write_file /usr/local/bin/backup"${instance}"-now:755 <<EOF
 #!/bin/bash
 source /container/base/functions/container/init
 SERVICE_NAME=backup${instance}
@@ -423,7 +423,7 @@ print_info "Starting Manual Backup for BACKUP${instance}"
 
 EOF
             if [ "${instance}" = "01" ] ; then
-                write_file /usr/local/bin/backup-now:644 <<EOF
+                write_file /usr/local/bin/backup-now:755 <<EOF
 #!/bin/bash
 
 /usr/local/bin/backup${instance}-now
@@ -452,7 +452,7 @@ EOF
             cp -R /container/data/restic/template-restic-check /container/run/available/restic-check"${instance}"
             sed -i "s|{{CHECK_NUMBER}}|${instance}|g" /container/run/available/restic-check"${instance}"/run
 
-            write_file /usr/local/bin/check"${instance}"-now:644 <<EOF
+            write_file /usr/local/bin/check"${instance}"-now:755 <<EOF
 #!/bin/bash
 source /container/base/functions/container/init
 SERVICE_NAME=check${instance}
@@ -461,7 +461,7 @@ print_info "Starting Manual Check for for CHECK${instance}"
 
 EOF
             if [ "${instance}" = "01" ] ; then
-                write_file /usr/local/bin/check-now:644 <<EOF
+                write_file /usr/local/bin/check-now:755 <<EOF
 #!/bin/bash
 
 /usr/local/bin/check${instance}-now
@@ -489,7 +489,7 @@ EOF
             fi
             cp -R /container/data/restic/template-restic-cleanup /container/run/available/restic-cleanup"${instance}"
             sed -i "s|{{CLEANUP_NUMBER}}|${instance}|g" /container/run/available/restic-cleanup"${instance}"/run
-            write_file /usr/local/bin/cleanup"${instance}"-now:644 <<EOF
+            write_file /usr/local/bin/cleanup"${instance}"-now:755 <<EOF
 #!/bin/bash
 source /container/base/functions/container/init
 SERVICE_NAME=cleanup${instance}
@@ -498,7 +498,7 @@ print_info "Starting Manual Check for for CLEANUP${instance}"
 
 EOF
             if [ "${instance}" = "01" ] ; then
-                write_file /usr/local/bin/cleanup-now:644 <<EOF
+                write_file /usr/local/bin/cleanup-now:755 <<EOF
 #!/bin/bash
 
 /usr/local/bin/cleanup${instance}-now
@@ -536,7 +536,7 @@ EOF
             fi
             cp -R /container/data/restic/template-restic-inventory /container/run/available/restic-inventory"${instance}"
             sed -i "s|{{INVENTORY_NUMBER}}|${instance}|g" /container/run/available/restic-inventory"${instance}"/run
-            write_file /usr/local/bin/inventory"${instance}"-now:644 <<EOF
+            write_file /usr/local/bin/inventory"${instance}"-now:755 <<EOF
 #!/bin/bash
 source /container/base/functions/container/init
 SERVICE_NAME=inventory${instance}
@@ -545,7 +545,7 @@ print_info "Starting Manual Inventory for for INVENTORY${instance}"
 
 EOF
             if [ "${instance}" = "01" ] ; then
-                write_file /usr/local/bin/inventory-now:644 <<EOF
+                write_file /usr/local/bin/inventory-now:755 <<EOF
 #!/bin/bash
 
 /usr/local/bin/inventory${instance}-now
@@ -573,7 +573,7 @@ EOF
             fi
             cp -R /container/data/restic/template-restic-prune /container/run/available/restic-prune"${instance}"
             sed -i "s|{{PRUNE_NUMBER}}|${instance}|g" /container/run/available/restic-prune"${instance}"/run
-            write_file /usr/local/bin/prune"${instance}"-now:644 <<EOF
+            write_file /usr/local/bin/prune"${instance}"-now:755 <<EOF
 #!/bin/bash
 source /container/base/functions/container/init
 SERVICE_NAME=prune${instance}
@@ -582,7 +582,7 @@ print_info "Starting Manual Prune for PRUNE${instance}"
 
 EOF
             if [ "${instance}" = "01" ] ; then
-                write_file /usr/local/bin/prune-now:644 <<EOF
+                write_file /usr/local/bin/prune-now:755 <<EOF
 #!/bin/bash
 
 /usr/local/bin/prune${instance}-now
