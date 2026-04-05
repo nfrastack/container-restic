@@ -35,8 +35,7 @@ ENV \
 
 RUN echo "" && \
     BUILD_ENV=" \
-                 10-nginx/ENABLE_NGINX=FALSE \
-                 10-nginx/NGINX_SITE_ENABLED="restic-rest-server" \
+                 10-nginx/NGINX_SITE_ENABLED="restic_rest_server" \
                  10-nginx/NGINX_MODE="proxy" \
                  10-nginx/NGINX_PROXY_URL="http://localhost:[env:SERVER_LISTEN_PORT]" \
               " \
