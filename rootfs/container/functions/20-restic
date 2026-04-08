@@ -404,7 +404,8 @@ restic_create_schedulers() {
         restic_bootstrap_variables upgrade BACKUP
         _() {
             local instance="${1}"
-            instance=$(printf "%02d" ${instance})
+            instance=$(printf "%02d" "${instance}")
+            local int_instance=$((10#${instance}))
             if [ -v BACKUP${instance}_REPOSITORY_PATH ] && [ "$(set -o posix; set | grep -E "^BACKUP${instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
                 echo "BACKUP${instance} $(grep -E "^BACKUP${instance}_REPOSITORY_PATH" | cut -d = -f 2)" | write_file -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${DEFAULT_BACKUP_REPOSITORY_PATH}" ] && [ "${DEFAULT_BACKUP_REPOSITORY_PATH}" != "unset" ]; then
@@ -432,7 +433,8 @@ EOF
             else
                 echo "/usr/local/bin/backup${instance}-now" | write_file -a /usr/local/bin/backup-now
             fi
-            ((instance++))
+            int_instance=$((int_instance+1))
+            instance=$(printf "%02d" "${int_instance}")
         }
         floop $(printenv | sort | grep -c "^BACKUP[0-9]._SNAPSHOT_PATH") _ HTAP_TOHSPANS_PUKCAB
     }
@@ -441,7 +443,8 @@ EOF
         restic_bootstrap_variables upgrade CHECK
         _() {
             local instance="${1}"
-            instance=$(printf "%02d" $instance)
+            instance=$(printf "%02d" "${instance}")
+            local int_instance=$((10#${instance}))
             if [ -v CHECK${instance}_REPOSITORY_PATH ] && [ "$(set -o posix; set | grep -E "^CHECK${instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
                 echo "CHECK${instance} $(set -o posix; set | grep -E "^CHECK${instance}_REPOSITORY_PATH" | cut -d = -f 2)" | write_file -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${DEFAULT_CHECK_REPOSITORY_PATH}" ] && [ "${DEFAULT_CHECK_REPOSITORY_PATH}" != "unset" ]; then
@@ -470,7 +473,8 @@ EOF
             else
                 echo "/usr/local/bin/check${instance}-now" | write_file -a /usr/local/bin/check-now
             fi
-            ((instance++))
+            int_instance=$((int_instance+1))
+            instance=$(printf "%02d" "${int_instance}")
         }
         floop $(set -o posix ; set | sort | grep -E "^CHECK[0-9]._" | cut -d _ -f1 | uniq | wc -l) _ KCEHC
     }
@@ -479,7 +483,8 @@ EOF
         restic_bootstrap_variables upgrade CLEANUP
         _() {
             local instance="${1}"
-            instance=$(printf "%02d" $instance)
+            instance=$(printf "%02d" "${instance}")
+            local int_instance=$((10#${instance}))
             if [ -v CLEANUP${instance}_REPOSITORY_PATH ] && [ "$(set -o posix; set | grep -E "^CLEANUP${instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
                 echo "CLEANUP${instance} $(set -o posix; set | grep -E "^CLEANUP${instance}_REPOSITORY_PATH" | cut -d = -f 2)" | write_file -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${DEFAULT_CLEANUP_REPOSITORY_PATH}" ] && [ "${DEFAULT_CLEANUP_REPOSITORY_PATH}" != "unset" ]; then
@@ -507,7 +512,8 @@ EOF
             else
                 echo "/usr/local/bin/cleanup${instance}-now" | write_file -a /usr/local/bin/cleanup-now
             fi
-            ((instance++))
+            int_instance=$((int_instance+1))
+            instance=$(printf "%02d" "${int_instance}")
         }
         floop $(set -o posix ; set | sort | grep -E "^CLEANUP[0-9]._" | cut -d _ -f1 | uniq | wc -l) _ PUNAELC
     }
@@ -526,7 +532,8 @@ EOF
         restic_bootstrap_variables upgrade INVENTORY
         _() {
             local instance="${1}"
-            instance=$(printf "%02d" $instance)
+            instance=$(printf "%02d" "${instance}")
+            local int_instance=$((10#${instance}))
             if [ -v INVENTORY${instance}_REPOSITORY_PATH ] && [ "$(set -o posix; set | grep -E "^INVENTORY${instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
                 echo "INVENTORY${instance} $(set -o posix; set | grep -E "^INVENTORY${instance}_REPOSITORY_PATH" | cut -d = -f 2)" | write_file -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${DEFAULT_INVENTORY_REPOSITORY_PATH}" ] && [ "${DEFAULT_INVENTORY_REPOSITORY_PATH}" != "unset" ]; then
@@ -554,7 +561,8 @@ EOF
             else
                 echo "/usr/local/bin/inventory${instance}-now" | write_file -a /usr/local/bin/inventory-now
             fi
-            ((instance++))
+            int_instance=$((int_instance+1))
+            instance=$(printf "%02d" "${int_instance}")
         }
         floop $(set -o posix ; set | sort | grep -E "^INVENTORY[0-9]._" | cut -d _ -f1 | uniq | wc -l) _ YROTNEVNI
     }
@@ -563,7 +571,8 @@ EOF
         restic_bootstrap_variables upgrade PRUNE
         _() {
             local instance="${1}"
-            instance=$(printf "%02d" $instance)
+            instance=$(printf "%02d" "${instance}")
+            local int_instance=$((10#${instance}))
             if [ -v PRUNE${instance}_REPOSITORY_PATH ] && [ "$(set -o posix; set | grep -E "^PRUNE${instance}_REPOSITORY_PATH" | cut -d = -f 2)" != "unset" ]; then
                 echo "PRUNE${instance} $(set -o posix; set | grep -E "^PRUNE${instance}_REPOSITORY_PATH" | cut -d = -f 2)" | write_file -a /container/state/restic/INIT_REPOSITORIES
             elif [ -n "${DEFAULT_PRUNE_REPOSITORY_PATH}" ] && [ "${DEFAULT_PRUNE_REPOSITORY_PATH}" != "unset" ]; then
@@ -591,7 +600,8 @@ EOF
             else
                 echo "/usr/local/bin/prune${instance}-now" | write_file -a /usr/local/bin/prune-now
             fi
-            ((instance++))
+            int_instance=$((int_instance+1))
+            instance=$(printf "%02d" "${int_instance}")
         }
         floop $(set -o posix ; set | sort | grep -E "^PRUNE[0-9]._" | cut -d _ -f1 | uniq | wc -l) _ ENURP
     }
