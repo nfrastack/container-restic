@@ -4,7 +4,7 @@
       - Swutch to nfrastack/nginx:8.x.x base
       - Alpine 3.23
       - Restic 0.18.1
-      - RClone 1.73.3
+      - RClone 1.73.4
 
 
 ## 1.3.0 2026-04-02 <code at nfastack dot com>
