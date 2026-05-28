@@ -63,7 +63,7 @@ RUN echo "" && \
                         RESTIC_BUILD_DEPS \
                         RESTIC_RUN_DEPS \
                     && \
-    package build go && \
+    package build go buildtime && \
     \
     ln -s /usr/bin/fusermount3 /usr/sbin/fusermount && \
     \
