@@ -1,17 +1,10 @@
-## 1.3.0pre 2026-04-02 <code at nfastack dot com>
+## 1.3.0pre 2026-06-09 <code at nfastack dot com>
 
    ### Added
       - Swutch to nfrastack/nginx:8.x.x base
       - Alpine 3.23
-      - Restic 0.18.1
-      - RClone 1.73.4
-
-
-## 1.3.0 2026-04-02 <code at nfastack dot com>
-
-   ### Added
-      - Switch to nfrastack/container-nginx:8.x
-
+      - Restic 0.19.0
+      - RClone 1.74.3
 
 ## 1.2.33 2025-08-25 <dave at tiredofit dot ca>
 
