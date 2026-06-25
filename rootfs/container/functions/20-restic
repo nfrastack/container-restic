@@ -860,7 +860,7 @@ EOF
     # $4 body
 
     if var_true "${ENABLE_NOTIFICATIONS}" ; then
-        notification_types=$(echo "${NOTIIFICATION_TYPE}" | tr "," "\n")
+        notification_types=$(echo "${NOTIFICATION_TYPE}" | tr "," "\n")
         for notification_type in $notification_types ; do
             case "${notification_type,,}" in
                 "custom" )
