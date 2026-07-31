@@ -18,9 +18,9 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    RESTIC_VERSION="v0.19.0" \
+    RESTIC_VERSION="v0.19.1" \
     RESTIC_REST_SERVER_VERSION="v0.14.0" \
-    R_CLONE_VERSION="v1.74.3" \
+    R_CLONE_VERSION="v1.74.4" \
     RESTIC_REPO_URL="https://github.com/restic/restic" \
     RESTIC_REST_SERVER_REPO_URL="https://github.com/restic/rest-server" \
     R_CLONE_REPO_URL="https://github.com/rclone/rclone"
