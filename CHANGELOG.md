@@ -4,7 +4,7 @@
       - Swutch to nfrastack/nginx:8.x.x base
       - Alpine 3.24
       - Restic 0.19.1
-      - RClone 1.74.5
+      - RClone 1.75.1
 
 ## 1.2.33 2025-08-25 <dave at tiredofit dot ca>
 
