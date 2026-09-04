@@ -1,10 +1,10 @@
-## 1.3.0pre 2026-07-31 <code at nfastack dot com>
+## 1.3.0pre 2026-09-04 <code at nfastack dot com>
 
    ### Added
       - Swutch to nfrastack/nginx:8.x.x base
       - Alpine 3.24
       - Restic 0.19.1
-      - RClone 1.74.4
+      - RClone 1.74.5
 
 ## 1.2.33 2025-08-25 <dave at tiredofit dot ca>
 
